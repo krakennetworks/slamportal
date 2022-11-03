@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller=function() {
+  /* widget controller */
+  var c = this;
+
+	c.changeDevice = function() {c.server.update();};
+	
+	c.initSelect = function() {
+		var init_input = c.data.dropdownInfo[0];
+		return init_input;
+	};
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css>$color-primary: !default;
+$color-danger: #ff7782;
+$color-success: #41f1b6;
+$color-warning: #ffbb55;
+$color-white: #fff;
+$color-info-dark: #7d8da1;
+$color-info-light: #dce1eb;
+$color-dark: #363949;
+$color-light: rgba(132,139,200,0.18);
+$color-primary-variant: #111e88;
+$color-dark-variant: #677483;
+$color-background: #f6f6f9;
+$card-border-radius: 2rem;
+$border-radius-1: 0.4rem;
+$border-radius-2: 0.8rem;
+$border-radius-3: 1.2rem;
+$card-padding: 1.8rem;
+$padding-1: 1.2rem;
+$box-shadow: 0 2rem 3rem $color-light;
+
+$chart-radius: 36;
+$circum: calc(2*3.141519*#{$chart-radius});
+$chart-offset: calc(#{$circum} * 0.25);
+
+@mixin chart-circle($circum) {
+  stroke-dashoffset: $chart-offset;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  border: 0;
+  appearance: none;
+  text-decoration: none;
+  list-style: none;
+  box-sizing: border-box;
+}
+
+html {font-size: 14px;}
+a {color: $color-dark;}
+body {
+  width: 100vw;
+  height: 100vh;
+  font-size: 0.88rem;
+  background: $color-background;
+}
+
+ 
+h1 {
+  font-weight: 800;
+  font-size: 1.8rem;
+}
+
+h2 { font-size: 1.4rem;}
+h3 { font-size: 0.87rem;}
+h4 { font-size: 0.8rem;}
+h5 { font-size: 0.77rem;}
+small { font-size: 0.75rem;}
+
+p { color: $color-dark-variant;}
+b { color: $color-dark;}
+.primary { color: $color-primary;}
+.danger { color: $color-danger;}
+.success { color: $color-success;}
+.warning { color: $color-warning;}
+
+.text-muted { color: $color-info-dark;}
+
+.dashboard-container {
+  display: grid;
+  width: 96%;
+  margin: 0 auto;
+  gap: 1.8rem;
+  grid-template-columns: auto;
+}
+
+main {
+  margin-top:1.4rem;
+  
+  
+#devices{
+  border: .5px solid $color-light;
+  border-style: inset;
+  box-shadow: $box-shadow;
+}
+#devices-content{
+  background-color:$color-dark;
+}
+  
+  .chart-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.6rem;
+    
+    &gt; div {
+      border:1px solid $color-light;
+      background: $color-white;
+      padding: $card-padding;
+      border-radius: $card-border-radius;
+      margin-top: 1rem;
+      box-shadow: $box-shadow;
+      transition: all 300ms ease;
+      
+      &amp;:hover { 
+        border:3px $color-light;
+        border-style: inset;
+        box-shadow: none;
+      }
+      .middle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    
+    h3 {
+      margin: 1rem 0 0.6rem;
+      font-size: 1rem;
+    }
+    
+    .circle-percent {
+      position: relative;
+      border-radius: 50%;
+      
+      .number {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 98%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    
+    small {
+      display: block;
+    }
+    
+    svg {
+      width: 7rem;
+      height: 7rem;
+      circle {
+        fill: none;
+        stroke: $color-primary;
+        stroke-width: 14;
+        stroke-linecap: round;
+      }
+    }
+    #avail-chart .middle .circle-percent svg circle{
+      $av: var(--avail-value);
+      stroke-dasharray: calc(calc(#{$av}*#{$circum}/100)+#{$chart-offset}), $circum;
+    }
+    #jitter-chart .middle .circle-percent svg circle{
+      $jv: var(--jitter-value);
+      stroke-dasharray: calc(#{$jv}*#{$circum}/100), $circum;
+    }
+    #latency-chart .middle .circle-percent svg circle{
+      $lv: var(--latency-value);
+      stroke-dasharray: calc(#{$lv}*#{$circum}/100), $circum;
+    }    
+    #dpr-chart .middle .circle-percent svg circle{
+      $dv: var(--dpr-value);
+      stroke-dasharray: calc(#{$dv}*#{$circum}/100), $circum;
+    }    
+  }
+  
+  .info-container {
+    margin-top: 2rem;
+    
+     h2 { margin-bottom: 0.8rem;}
+     table {
+      background: $color-white;
+      width: 100%;
+      border-radius: $card-border-radius;
+      padding: $card-padding;
+      text-align: center;
+      box-shadow: $box-shadow;
+      transition: all 300ms ease;
+      
+      &amp;:hover { box-shadow: none;}
+      
+      tbody {
+        td {
+          font-size: 1.1rem;
+          height: 2.8rem;
+          border-bottom: 1px solid $color-light;
+          color: $color-dark-variant;
+        }
+        tr:last-child td { border: none;}
+        tr td:first-child {
+          border: none;
+          width: 10rem;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .app-container {width: 94%;}
+  main .chart-container {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .app-container { padding-bottom: 2rem;}
+  main .device { width: 100%;}
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>mcp_service_view</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>MCP Service View</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function(){
+	function findUnique(table,field) {
+		var af = 'sum';
+		var query = new global.GlideQuery(table).groupBy(field).aggregate(af,'latency').select();
+		var uniques = [];
+		query.forEach(function(row){uniques.push(row['group'][field]);});
+		return uniques;
+	}
+	
+	if (input == undefined){
+		initialSetup();
+	}
+
+	if (input && input.device_update){
+		data.device_info = recordHandler(input.device_update);
+	}
+	
+	
+	
+	
+	function initialSetup(){
+		var table = 'x_620670_sla_mon_0_mcp_current_slas';
+		var field = 'service_name';
+		data.dropdownInfo = findUnique(table, field);
+		
+		
+		
+		
+		data.device_info = recordHandler(data.dropdownInfo[0]);
+	}
+	
+
+	
+	
+	function recordHandler(name){
+		var table = 'x_620670_sla_mon_0_mcp_current_slas';
+		var info_table = 'x_620670_sla_mon_0_mcp_services';
+		var field = 'service_name';
+		gr = new GlideRecord(info_table);
+		gn = new GlideRecord(table);
+		gr.get('service_name',name);
+		gn.get('service_name',name);
+		
+		var jitter = new global.GlideQuery(table).where(field, name).avg('jitter').orElse('Jitter Failed');
+		var latency = new global.GlideQuery(table).where(field, name).avg('latency').orElse('Latency Failed');
+		var availability = new global.GlideQuery(table).where(field, name).avg('availability').orElse('Avail Failed');
+		var dpr = new global.GlideQuery(table).where(field, name).avg('packet_loss').orElse('DPR Failed');
+		var results = {'jitter': jitter, 'latency': latency};
+		return {
+			//hostname: gn.getValue("service_name"),
+			service: gn.getValue('service_name'),
+			//sysName: gn.getValue("info_sysname"),
+			serviceID: gr.getValue("u_service_id"),
+			//ipAddress: gr.getValue("info_ip"),
+			deploy: gr.getValue('u_deployment_state'),
+			//hardware: gr.getValue("info_hardware"),
+			state: gr.getValue("sys_import_state"),
+			//serial: gr.getValue("info_serial"),
+			native: gr.getValue('u_native_name'),
+			//version: gr.getValue("info_version"),
+			topology: gr.getValue("u_topology_sources"),
+			//location: gr.getValue("info_location"),
+			networkRole: gn.getValue("network_role"),
+			//description: gr.getValue("info_sysDescr"),
+			service_type: gr.getValue('u_service_type'),
+			totalDropRatio: dpr,
+			latency24Hour: latency,
+			jitter24Hour: jitter,
+			availability: availability
+		}
+	}
+	
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-02 23:48:11</sys_created_on>
+        <sys_id>f5c77ba347f211105c2ec789826d4344</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>MCP Service View</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_widget_f5c77ba347f211105c2ec789826d4344</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-02 23:51:35</sys_updated_on>
+        <template><![CDATA[<section class='dashboard-container'>
+  <main>
+    <h1>{{c.data.dropdownInfo[0]}} - Dashboard</h1>
+    <label>Select Service : 
+    <select name="devices" id="devices" ng-change="c.changeDevice()" ng-model="c.data.device_update" ng-options="option for option in c.data.dropdownInfo"><option  selected disabled value="" >--Select--</option></select>
+    </label>
+      <div class="chart-container">
+      <div class="percent-chart" id="avail-chart" style="--avail-value: {{c.device_info.availability}}">
+        <div class="middle">
+          <div class="left">
+            <h3>Availability</h3>
+            <h1>{{c.data.devive_info.availability}}</h1>
+          </div>
+          <div class="circle-percent">
+            <svg>
+              <circle cx="50%" cy="50%" r="36%"></circle>
+            </svg>
+            <div class="number">
+              <p>{{c.data.device_info.availability}}</p>
+            </div>
+          </div>
+        </div>
+        <small class="text-muted">Last 24 Hours</small>
+      </div>
+      <div class="numeric-chart" id="jitter-chart" style="--jitter-value: {{c.device_info.jitter24Hour}}">
+        <div class="middle">
+          <div class="left">
+            <h3>Jitter</h3>
+            <h1>{{c.jitter}}</h1>
+          </div>
+          <div class="circle-percent">
+            <svg>
+              <circle cx="50%" cy="50%" r="36%"></circle>
+            </svg>
+            <div class="number">
+              <p>{{c.data.device_info.jitter24Hour}}</p>
+            </div>
+          </div>
+        </div>
+        <small class="text-muted">Last 24 Hours</small>
+      </div>
+      <div class="numeric-chart" id="latency-chart" style="--latency-value: {{c.device_info.latency24Hour}}">
+        <div class="middle">
+          <div class="left">
+            <h3>Latency</h3>
+            <h1>{{c.data.device_info.latency24Hour}}</h1>
+          </div>
+          <div class="circle-percent">
+            <svg>
+              <circle cx="50%" cy="50%" r="36%"></circle>
+            </svg>
+            <div class="number">
+              <p>{{c.data.device_info.latency24Hour}}</p>
+            </div>
+          </div>
+        </div>
+        <small class="text-muted">Last 24 Hours</small>
+      </div>
+      <div class="percent-chart" id="dpr-chart" style="--dpr-value: {{c.device_info.totalDropRatio}}">
+        <div class="middle">
+          <div class="left">
+            <h3>Dropped Packet Ratio</h3>
+            <h1>{{c.data.device_info.totalDropRatio}} Dropped Packets</h1>
+          </div>
+          <div class="circle-percent">
+            <svg>
+              <circle cx="50%" cy="50%" r="36%"></circle>
+            </svg>
+            <div class="number">
+              <p>{{c.data.device_info.totalDropRatio}}</p>
+            </div>
+          </div>
+        </div>
+        <small class="text-muted">Last 24 Hours</small>
+      </div>
+    </div>
+
+    <div class="info-container">
+        <h1>Device Information</h1>
+        <table>
+          <tbody>
+            <tr>
+              <td>Service:</td>
+              <td>{{c.data.device_info.service}}</td>
+            </tr>
+            <tr>
+              <td>Service ID:</td>
+              <td>{{c.data.device_info.serviceID}}</td>
+            </tr>
+            <tr>
+              <td>Deployment Status:</td>
+              <td>{{c.data.device_info.deploy}}</td>
+            </tr>
+            <tr>
+              <td>Topology Sources:</td>
+              <td>{{c.data.device_info.topology}}</td>
+            </tr>
+            <tr>
+              <td>State:</td>
+              <td>{{c.data.device_info.state}}</td>
+            </tr>
+            <tr>
+              <td>Native Name:</td>
+              <td>{{c.data.device_info.native}}</td>
+            </tr>
+            <tr>
+              <td>Network Role:</td>
+              <td>{{c.data.device_info.networkRole}}</td>
+            </tr>
+            <tr>
+              <td>Service Type:</td>
+              <td>{{c.data.device_info.service_type}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </main>
+</section>]]></template>
+    </sp_widget>
+</record_update>

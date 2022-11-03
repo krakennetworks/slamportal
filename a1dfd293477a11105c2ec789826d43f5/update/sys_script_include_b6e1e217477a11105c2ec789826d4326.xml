@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_620670_sla_mon_0.MCPConnection</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Script include that creates a connection with an MCP Instance. See setToken to enter username/password and see initialize to set host of MCP instance.</description>
+        <name>MCPConnection</name>
+        <script><![CDATA[var MCPConnection = Class.create();
+MCPConnection.prototype = {
+    initialize: function() {
+		this.host = "https://10.224.119.18";
+		this.headers = [["Cache-control", "no-cache"],["Content-type","application/json"]];
+		this.token = null;
+    },
+	
+	defaultValue: function(variable, value){
+		return 	variable = (variable !== undefined) ? variable : value;
+	},
+	
+	avgOfArray: function(array){
+		if(array.length < 1){
+			return;
+		}
+		var sum = 0.0;
+		for(var i in array){
+			sum += array[i];
+		}
+		return sum / array.length;
+	},
+	
+	sendRequest: function(endpoint, method, headers, payload, params){
+		method = this.defaultValue(method,"GET");
+		headers = this.defaultValue(headers, this.headers);
+		payload = this.defaultValue(payload, this.payload);
+		params = this.defaultValue(params, []);
+		
+		if (!this.token){
+			this.token = this.setToken();
+		}
+		//gs.debug(this.token);
+		headers.push(['authorization', this.token]);
+		var request = new sn_ws.RESTMessageV2();
+		var url = this.host+endpoint;
+		request.setHttpMethod(method);
+		request.setEndpoint(url);
+		request.setRequestBody(payload);
+		this.setHeaders(request,headers);
+		this.setParams(request,params);
+		var response = request.execute();
+		//gs.debug(response.getQueryString());
+		return JSON.parse(response.getBody());
+	},
+	
+	setToken: function(){
+		var request = new sn_ws.RESTMessageV2();
+		var endpoint = this.host+"/tron/api/v1/oauth2/tokens";
+		var payload = "username=smauk1&password=123EDCvfr%24%25%5E&expires_in=10&grant_type=password";
+		var headers = 
+		[
+			["accept","application/json"],
+			["Cache-control", "no-cache"],
+			["Content-type","application/x-www-form-urlencoded"]
+		];
+		
+		request.setHttpMethod("post");
+		request.setEndpoint(endpoint);
+		request.setRequestBody(payload);  
+		this.setHeaders(request, headers);
+
+		var executed = request.execute();
+		var response = JSON.parse(executed.getBody());
+
+		token = response['accessToken'];
+		//gs.print(token);
+
+		this.token = "bearer " +token;
+		return this.token;
+	},
+	
+	setHeaders: function(request,headers){
+		for(var i =0; i < headers.length; i++)
+		{        
+			var row = headers[i];
+			request.setRequestHeader(row[0],row[1]);
+		}
+	},
+	
+	setParams: function(request,params){
+		for(var i =0; i < params.length; i++)
+		{        
+			var row = params[i];
+			request.setQueryParameter(row[0],row[1]);
+		}
+	},
+	
+	sendPaginatedRequest: function(endpoint, method, headers, payload, params){
+		method = this.defaultValue(method,"GET");
+		headers = this.defaultValue(headers, this.headers);
+		payload = this.defaultValue(payload, this.payload);
+		params = this.defaultValue(params, []);
+		
+		var limit = 100;
+		params.push(['limit',limit.toString()]);
+		
+		var response = this.sendRequest(endpoint, method, headers, payload, params);
+		var data = response['data'];
+		var total = response['meta']['total'];
+		if (total < limit){
+			return data;
+		}
+		for (var i=limit; i < total; i+=limit){
+			var params2 = params;
+			params2.push(['offset', i.toString()]);
+			var response2 = this.sendRequest(endpoint, method, headers, payload, params2);
+			var data2 = response2['data'];
+			for (var j = 0; j < data2.length; j++){
+				data.push(data2[j]);
+			}
+		}
+		return data;
+	},
+	
+	getFREInventory: function(){
+		return this.sendPaginatedRequest("/nsi/api/search/fres");
+	},
+	
+	getOperationalMeasurements: function(freIDList,granularity,synchronous){
+		freIDList = this.defaultValue(freIDList,[]);
+		granularity = this.defaultValue(granularity,"untimed");
+		synchronous = this.defaultValue(synchronous,true);
+		
+		var payload = {
+                    "data": {
+                        "freIds": freIDList,
+                        "granularity": granularity,
+                        "synchronous": synchronous
+                        }
+                    };
+		return this.sendRequest("/tdc/api/v2/diag/operMeas","POST",this.headers,payload.toString());
+	},
+    
+	type: 'MCPConnection'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-01 22:57:24</sys_created_on>
+        <sys_id>b6e1e217477a11105c2ec789826d4326</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>MCPConnection</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_script_include_b6e1e217477a11105c2ec789826d4326</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-02 23:04:01</sys_updated_on>
+    </sys_script_include>
+</record_update>

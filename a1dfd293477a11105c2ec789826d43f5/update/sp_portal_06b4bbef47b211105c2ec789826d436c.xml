@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_portal">
+    <sp_portal action="INSERT_OR_UPDATE">
+        <css_variables>$brand-primary:#7380ec;
+$body-bg:#f6f6f9;
+$state-success-text:#5cb85c;
+$sp-homepage-bg:#fff;
+$sp-navbar-divider-color:#fff;
+$text-color:#717171;
+$sp-logo-margin-y:.5rem;
+$navbar-inverse-link-hover-color:#ffffff;
+$panel-bg:#fff;
+$brand-success:#2dbc3e;
+$navbar-inverse-bg:#363949;
+$brand-warning:#ffbb55;
+$brand-danger:#ff7782;
+$sp-tagline-color:#717171;
+$navbar-inverse-link-color:#7380ec;
+$brand-info:#5bc0de;
+$link-color:#428bca;
+$sp-logo-margin-x:1rem;
+$btn-default-bg:#fff;
+$text-muted:#979797;
+
+$color-primary: #7380ec;
+$color-danger: #ff7782;
+$color-success: #41f1b6;
+$color-warning: #ffbb55;
+$color-white: #fff;
+$color-info-dark: #7d8da1;
+$color-info-light: #dce1eb;
+$color-dark: #363949;
+$color-light: rgba(132,139,200,0.18);
+$color-primary-variant: #111e88;
+$color-dark-variant: #677483;
+$color-background: #f6f6f9;
+$card-border-radius: 2rem;
+$border-radius-1: 0.4rem;
+$border-radius-2: 0.8rem;
+$border-radius-3: 1.2rem;
+$card-padding: 1.8rem;
+$padding-1: 1.2rem;
+$box-shadow: 0 2rem 3rem $color-light;
+
+$chart-radius: 36;
+$circum: calc(2*3.141519*#{$chart-radius});
+$chart-offset: calc(#{$circum} * 0.25);</css_variables>
+        <default>false</default>
+        <enable_ais>false</enable_ais>
+        <enable_favorites>false</enable_favorites>
+        <hide_portal_name>false</hide_portal_name>
+        <homepage/>
+        <icon/>
+        <kb_knowledge_base/>
+        <kb_knowledge_page/>
+        <login_page display_value="login">6995a144cb11120000f8d856634c9c25</login_page>
+        <logo/>
+        <notfound_page display_value="404">3c2c9063cb11020000f8d856634c9c1f</notfound_page>
+        <quick_start_config/>
+        <sc_catalog/>
+        <sc_catalog_page/>
+        <sc_category_page/>
+        <search_application/>
+        <search_results_configuration/>
+        <sp_chat_queue/>
+        <sp_rectangle_menu/>
+        <sys_class_name>sp_portal</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-02 23:36:59</sys_created_on>
+        <sys_id>06b4bbef47b211105c2ec789826d436c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SLA Monitoring Portal</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_portal_06b4bbef47b211105c2ec789826d436c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-02 23:36:59</sys_updated_on>
+        <theme/>
+        <title>SLA Monitoring Portal</title>
+        <ts_index_group/>
+        <url_suffix>slamp</url_suffix>
+    </sp_portal>
+    <sys_translated_text action="delete_multiple" query="documentkey=06b4bbef47b211105c2ec789826d436c"/>
+</record_update>

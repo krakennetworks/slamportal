@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller=function() {
+  /* widget controller */
+  var c = this;	
+	var passedData = c.data.names;	
+	c.services = passedData;
+	
+	var color_success = "#2dbc3e";
+	var color_danger = "#ff7782";
+	var color_warning = "#ffbb55";
+
+		
+	c.color_Jitter = function color_Jitter(givenNum)
+	{
+		var textCol ='';		
+		if( givenNum <= 10)
+              {
+                textCol = color_success;
+              }
+              else
+              {
+                textCol = color_danger;
+              }		
+		return textCol;
+	}
+	
+	c.color_latency = function color_Latency(givenNum)
+	{
+		var textCol ='';		
+		if( givenNum <= 10)
+              {
+                textCol = color_success;
+              }
+              else
+              {
+                textCol = color_danger;
+              }		
+		return textCol;
+	}
+	
+	c.color_Loss = function color_Loss(givenNum)
+	{
+		var textCol ='';		
+		if( givenNum <= 0.1)
+              {
+                textCol = color_success;
+              }
+              else
+              {
+                textCol = color_danger;
+              }		
+		return textCol;
+	}
+	
+	c.color_avail = function color_avail(givenNum)
+	{
+		var textCol ='';		
+		if( givenNum >=99.9)
+              {
+                textCol = color_success;
+              }
+              else
+              {
+                textCol = color_danger;
+              }		
+		return textCol;
+	}
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css>$color-primary: #7380ec;
+$color-danger: #ff7782;
+$color-success: #2dbc3e;
+$color-warning: #ffbb55;
+$color-white: #fff;
+$color-info-dark: #7d8da1;
+$color-info-light: #dce1eb;
+$color-dark: #363949;
+$color-light: rgba(132,139,200,0.18);
+$color-primary-variant: #111e88;
+$color-dark-variant: #677483;
+$color-background: #f6f6f9;
+$card-border-radius: 2rem;
+$border-radius-1: 0.4rem;
+$border-radius-2: 0.8rem;
+$border-radius-3: 1.2rem;
+$card-padding: 1.8rem;
+$padding-1: 1.2rem;
+$box-shadow: 0 2rem 3rem $color-dark-variant;
+$chart-radius: 36;
+$circum: calc(2*3.141519*#{$chart-radius});
+$chart-offset: calc(#{$circum} * 0.25);
+
+
+.body_format{
+    font-family: arial;
+    font-size: 1.4rem;
+    margin: 0;
+    background-color: $color-light;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+  
+
+.grid
+{
+  width: auto;
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  grid-template-rows: auto;
+  text-align: center;
+  font-size: 1.4rem;
+  background-color: $color-light;
+ 	
+}
+
+.cell
+{
+  
+  margin: 2px;
+  background-color: white;
+  width: auto;
+}
+
+.col1
+{
+  grid-column-start: 1;
+  grid-column-end:2;
+  text-align: center;  
+}
+
+.col2
+{
+  
+  grid-column-start: 2;
+  grid-column-end:3;
+  border-left: solid;  
+  border-color: $color-primary; 
+}
+
+.col3
+{
+  grid-column-start: 3;
+  grid-column-end:4;
+  border-left: solid;
+  border-color: $color-primary;
+}
+
+.col4
+{
+   grid-column-start: 4;
+  grid-column-end:5;
+  border-left: solid;
+  border-color: $color-primary;
+}
+
+.col5
+{
+    grid-column-start: 5;
+  grid-column-end:6; 
+  border-left: solid;
+  border-color: $color-primary;
+}
+.row1
+{
+  grid-row-start:1;
+  grid-row-end:2;
+}
+ .row2
+{
+  grid-row-start:2;
+  grid-row-end:3;
+}
+
+.box{   
+  	background: $color-white;
+    padding: $card-padding;
+    border-radius: $card-border-radius;
+    margin-top: 1rem;
+    box-shadow: $box-shadow;
+    transition: all 300ms ease;
+
+    &amp;:hover { 
+      box-shadow: 0 2rem 3rem $color-primary-variant;
+    }
+    .middle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+
+@media screen and (max-width: 1000px) {
+  .app-container {width: 94%;}
+}
+
+@media screen and (max-width: 600px) {
+  .app-container { padding-bottom: 2rem;}
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>mcp_metrics_view</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>MCP Metrics View</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+	var serviceNames = [];
+	var services = new GlideRecord('x_620670_sla_mon_0_mcp_current_slas');
+	//services.setLimit(20);
+	services.query();
+	for(var i = 0; i < services.getRowCount();i++)
+		{
+			services.next();
+			var temp = {};
+			temp.name = services.getValue('service_name');
+			temp.jitter = services.getValue('jitter');
+			temp.latency = services.getValue('latency');
+			temp.avail = services.getValue('availability');
+			temp.loss = services.getValue('packet_loss');
+			//code to for on click of record.
+			//temp.recordLink = service.whateverfunction/module
+			serviceNames.push(temp);
+			
+		}
+	data.names = serviceNames;
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-02 23:59:25</sys_created_on>
+        <sys_id>a25abb2747f211105c2ec789826d43b6</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>MCP Metrics View</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_widget_a25abb2747f211105c2ec789826d43b6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-03 00:01:21</sys_updated_on>
+        <template><![CDATA[<div ng-repeat = "x in c.services" class = 'grid box'>
+      	<div class='cell col1 row1'>Service Name: <br>{{x.name}}</div>    	
+    	<div class='cell col2 row1'>Jitter: <br><span style="color:{{c.color_Jitter(x.jitter)}}">{{x.jitter}}</span></div>>
+      	<div class='cell col3 row1'>Latency: <br><span style="color:{{c.color_latency(x.latency)}}">{{x.latency}}</span></div> 
+    	<div class="cell col4 row1">Availability<br><span style ="color:{{c.color_avail(x.avail)}}">{{x.avail}}</span></div>    	
+      	<div  class='cell col5 row1'>Packet Loss<br><span style ="color:{{c.color_Loss(x.loss)}}">{{x.loss}}</span></div>    
+  </div>]]></template>
+    </sp_widget>
+</record_update>

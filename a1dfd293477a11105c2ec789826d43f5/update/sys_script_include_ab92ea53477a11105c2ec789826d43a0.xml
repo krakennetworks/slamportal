@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_620670_sla_mon_0.LibreConnection</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Script used to connect to LibreNMS instance. Make sure to add the correct host and API token in the script below.</description>
+        <name>LibreConnection</name>
+        <script><![CDATA[var LibreConnection = Class.create();
+LibreConnection.prototype = {
+    initialize: function() {
+		this.host = "http://10.224.119.19/api/v0";
+		this.token = "c9dbd7682c7f8ebe6041c8d958e19aef";
+    },
+	
+	collectPacketRatio: function(c, e){
+		if (e < 1){ return 0.000;}
+		if (count < 1){ return 100.0;}
+		return e / c * 100;
+	},
+	
+	defaultValue: function(variable, value){
+		return 	variable = (variable !== undefined) ? variable : value;
+	},
+	
+	sendRequest: function(endpoint, method){
+		method = this.defaultValue(method,"GET");
+				
+		var request = new sn_ws.RESTMessageV2();
+		var url = this.host+endpoint;
+		
+		request.setHttpMethod(method);
+		request.setEndpoint(url);
+		request.setRequestHeader('X-Auth-Token', this.token);
+		
+		var response = request.execute();
+		return JSON.parse(response.getBody());
+	},
+	
+	sendGraphRequest: function(endpoint, method){
+		method = this.defaultValue(method,"GET");
+				
+		var request = new sn_ws.RESTMessageV2();
+		var url = this.host+endpoint;
+		
+		request.setHttpMethod(method);
+		request.setEndpoint(url);
+		request.setRequestHeader('X-Auth-Token', this.token);
+		
+		var response = request.execute();
+		return response.getBody();
+	},
+	
+	getDevices: function(){
+		var endpoint = this.host+"/devices";
+		var resp = this.sendRequest(endpoint, "GET");
+		return resp['devices'];
+	},
+	
+	getDeviceInfo: function(deviceId){
+		var endpoint = this.host+"/devices/"+deviceId.toString();
+		var resp = this.sendRequest(endpoint, "GET");
+		var device = resp['devices'][0];
+		return {
+			'deviceId': device['device_id'],
+			'hostname': device['hostname'],
+			'ipAddress': device['ip'],
+			'hardware': device['hardware'],
+			'location': device['location'],
+			'serialNum':device['serial'],
+			'sysName':device['sysName'],
+			'sysDescr': device['sysDescr'],
+			'version': device['version']
+		};
+	},
+	
+	getDeviceAvailability: function(deviceId){
+		var endpoint = this.host+"/devices/"+deviceId.toString()+"/availability";
+		var resp = this.sendRequest(endpoint, "GET");
+		if (resp['availability'].length > 0){
+			return resp['availability'][-1]['availability_perc'];
+		}
+	},
+	
+	getDeviceJitterGraph: function(deviceId){
+		var endpoint = this.host+"/devices/"+deviceId.toString()+"/device_sla_jitter";
+		var resp = this.sendGraphRequest(endpoint, "GET");
+		return resp;
+	},
+	
+	getDeviceLatencyGraph: function(deviceId){
+		var endpoint = this.host+"/devices/"+deviceId.toString()+"/device_ping_perf";
+		var resp = this.sendGraphRequest(endpoint, "GET");
+		return resp;
+	},
+	
+	getDeviceDPR: function(deviceId){
+		var ports = this.getDevicePorts(deviceId);
+
+		var packets = 0;
+		var es = 0;
+		
+		for(p in ports){
+			var endpoint = this.host+"/devices/"+deviceId.toString()+"/ports"+ports[p].toString();
+			var resp = this.sendRequest(endpoint, "GET");
+			if (resp['status'] == 'ok'){
+				packets += resp['port']['ifInUcastPkts'];
+				es += resp['port']['ifInErrors'];
+				packets += resp['port']['ifOutUcastPkts'];
+				es += resp['port']['ifOutErrors'];
+			}
+		}
+		
+		return {
+			'packets': packets,
+			'errors': es,
+			'total_ratio': this.collectPacketRatio(packets, es)
+		};
+		
+	},
+	
+	getDevicePorts: function(deviceId){
+		var endpoint = this.host+"/devices/"+deviceId.toString()+"/ports";
+		var resp = this.sendRequest(endpoint, "GET");
+		portNames = [];
+		for (i in resp['ports']){
+			portNames.push(resp['ports'][i]['ifName']);
+		}
+		return portNames;
+	},
+	
+    type: 'LibreConnection'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-01 22:58:43</sys_created_on>
+        <sys_id>ab92ea53477a11105c2ec789826d43a0</sys_id>
+        <sys_mod_count>6</sys_mod_count>
+        <sys_name>LibreConnection</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_script_include_ab92ea53477a11105c2ec789826d43a0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-02 23:25:57</sys_updated_on>
+    </sys_script_include>
+</record_update>

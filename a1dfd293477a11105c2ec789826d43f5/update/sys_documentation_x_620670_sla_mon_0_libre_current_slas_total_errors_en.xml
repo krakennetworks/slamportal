@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="total_errors" label="Total Errors" language="en" table="x_620670_sla_mon_0_libre_current_slas">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>total_errors</element>
+            <help/>
+            <hint/>
+            <label>Total Errors</label>
+            <language>en</language>
+            <name>x_620670_sla_mon_0_libre_current_slas</name>
+            <plural>Total Errors</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-02 22:02:22</sys_created_on>
+            <sys_id>f78fdbeb477211105c2ec789826d4345</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Total Errors</sys_name>
+            <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+            <sys_update_name>sys_documentation_x_620670_sla_mon_0_libre_current_slas_total_errors_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2022-11-02 22:02:22</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

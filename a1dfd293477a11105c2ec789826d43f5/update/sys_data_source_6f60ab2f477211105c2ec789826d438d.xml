@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_data_source">
+    <sys_data_source action="INSERT_OR_UPDATE">
+        <batch_size>1000</batch_size>
+        <category/>
+        <connection_override_last_success_time/>
+        <connection_timeout>0</connection_timeout>
+        <connection_url/>
+        <connection_url_parameters/>
+        <csv_delimiter/>
+        <data_in_single_column>false</data_in_single_column>
+        <data_loader><![CDATA[(function loadData(import_set_table, data_source, import_log, last_success_import_time) {
+	
+	//Set Import Table
+	import_set_table.addColumn("Service Id");
+	import_set_table.addColumn("Service Name");
+	import_set_table.addColumn("Service Type");
+	import_set_table.addColumn("Service Class");
+	import_set_table.addColumn("Signal Content");
+	import_set_table.addColumn("Deployment State");
+	import_set_table.addColumn("Resource State");
+	import_set_table.addColumn("Operational State");
+	import_set_table.addColumn("Directionality");
+	import_set_table.addColumn("Layer Rate");
+	import_set_table.addColumn("Network Role");
+	import_set_table.addColumn("Reliability");
+	import_set_table.addColumn("Resilience Level");
+	import_set_table.addColumn("Topology Sources");
+	import_set_table.addColumn("Status");
+	
+	//Import Data
+	var connection = new MCPConnection();
+	var data = connection.getFREInventory();
+	//gs.debug(data);
+	
+	for(var i =0; i < data.length; i++){
+		var row = data[i];
+		var attributes = row['attributes'];
+		var serviceName;
+		if (attributes.hasOnwProperty('displayData')){
+			if (attributes['displayData'].hasOwnProperty('displayName')){
+				serviceName = attributes['displayData']['displayName'];
+			}
+		}
+		var map = {
+			'Service ID': row['id'],
+			'Service Name': serviceName,
+			'Service Type': row['type'],
+			'Service Class': attributes['serviceClass'],
+			'Signal Content': attributes['signalContentType'],
+			"Operational State": attributes['operationState'],
+			"Deployment State": attributes['deploymentState'],
+			"Resource State": attributes['resourceState'],
+			"Layer Rate": attributes['layerRate'],
+			"Network Role": attributes['networkRole'],
+			"Directionality": attributes['directionality'],
+			"Reliability": attributes['reliability'],
+			"Resilience Level": attributes['resilienceLevel'],
+			"Topology Sources": attributes['topologySources'],
+			"Status": attributes['active']
+		};
+		import_set_table.insert(map);
+	}
+})(import_set_table, data_source, import_log, last_success_import_time);]]></data_loader>
+        <database_name/>
+        <database_port/>
+        <discard_arrays>true</discard_arrays>
+        <expand_node_children>false</expand_node_children>
+        <file_path/>
+        <file_retrieval_method>Attachment</file_retrieval_method>
+        <format>CSV</format>
+        <glide_keystore>false</glide_keystore>
+        <header_row>0</header_row>
+        <import_set_table_label>mcps import</import_set_table_label>
+        <import_set_table_name>x_620670_sla_mon_0_mcps_import</import_set_table_name>
+        <instance_name/>
+        <jdbc_password/>
+        <jdbc_server/>
+        <jdbc_user_name/>
+        <jpath_root_node/>
+        <last_run_database_field/>
+        <last_run_datetime/>
+        <last_success_import_time/>
+        <ldap_target/>
+        <ldapprobe_result_set_rows>200</ldapprobe_result_set_rows>
+        <limit/>
+        <maximum_rows/>
+        <mid_server/>
+        <name>MCP Services DS</name>
+        <offset>0</offset>
+        <oracle_port>1521</oracle_port>
+        <oracle_sid>orcl</oracle_sid>
+        <parsing_script><![CDATA[// The input value can be accessed through the variables named "line", "lineNumber" and "result"
+// The function uses result variable to return parse result back. 
+(function(line,lineNumber,result) {
+	// add code here
+})(line,lineNumber,result);]]></parsing_script>
+        <properties/>
+        <query>All Rows from Table</query>
+        <query_timeout>0</query_timeout>
+        <request_action/>
+        <scp_authentication>Username and Password</scp_authentication>
+        <scp_password/>
+        <scp_port/>
+        <scp_server/>
+        <scp_user_name/>
+        <sheet_number>0</sheet_number>
+        <sql_statement/>
+        <ssh_keyfile_path/>
+        <support_pagination>false</support_pagination>
+        <sys_class_name>sys_data_source</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-02 22:18:19</sys_created_on>
+        <sys_id>6f60ab2f477211105c2ec789826d438d</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>MCP Services DS</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_data_source_6f60ab2f477211105c2ec789826d438d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-02 23:17:09</sys_updated_on>
+        <table_name/>
+        <type>CUSTOM</type>
+        <use_batch_import>false</use_batch_import>
+        <use_integrated_authentication>false</use_integrated_authentication>
+        <use_last_run_datetime>false</use_last_run_datetime>
+        <xpath_root_node/>
+        <zipped>false</zipped>
+    </sys_data_source>
+</record_update>
