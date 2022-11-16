@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="cdec5b2b477211105c2ec789826d4369" label="MCP Current SLAs" max_length="40" name="x_620670_sla_mon_0_mcp_current_slas" type="collection">
+        <element label="Jitter" max_length="40" name="jitter" type="float"/>
+        <element label="Latency" max_length="40" name="latency" type="float"/>
+        <element label="Packet Loss" max_length="40" name="packet_loss" type="float"/>
+        <element label="Service Id" max_length="40" name="service_id" reference="x_620670_sla_mon_0_mcp_services" type="string"/>
+        <element display="true" label="Status" max_length="40" name="status" type="boolean"/>
+    </element>
+</database>

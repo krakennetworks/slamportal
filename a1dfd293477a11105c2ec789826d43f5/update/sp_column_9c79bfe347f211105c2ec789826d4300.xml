@@ -6,18 +6,15 @@
         <size_lg/>
         <size_sm/>
         <size_xs/>
-        <sp_row display_value="2">9c797fe347f211105c2ec789826d43fe</sp_row>
+        <sp_row display_value="4">9c797fe347f211105c2ec789826d43fe</sp_row>
         <sys_class_name>sp_column</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-11-02 23:55:27</sys_created_on>
         <sys_id>9c79bfe347f211105c2ec789826d4300</sys_id>
-        <sys_mod_count>0</sys_mod_count>
         <sys_name>1</sys_name>
         <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
         <sys_update_name>sp_column_9c79bfe347f211105c2ec789826d4300</sys_update_name>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-11-02 23:55:27</sys_updated_on>
     </sp_column>
 </record_update>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="203b17e7477211105c2ec789826d43d5" label="MCP Services" max_length="40" name="x_620670_sla_mon_0_mcp_services" type="collection">
+        <element label="Active" max_length="40" name="active" type="boolean"/>
+        <element label="Deployment State" max_length="40" name="deploy_state" type="string"/>
+        <element label="Directionality" max_length="40" name="directionality" type="string"/>
+        <element label="Layer Rate" max_length="40" name="layer_rate" type="string"/>
+        <element label="Network Role" max_length="40" name="network_role" type="string"/>
+        <element label="Operational State" max_length="40" name="operation_state" type="string"/>
+        <element label="Reliability" max_length="40" name="reliability" type="string"/>
+        <element label="Resilience Level" max_length="40" name="resilience_level" type="string"/>
+        <element label="Resource State" max_length="40" name="resource_state" type="string"/>
+        <element label="Service Class" max_length="40" name="service_class" type="string"/>
+        <element label="Service Id" max_length="40" name="service_id" type="string"/>
+        <element label="Service Name" max_length="40" name="service_name" type="string"/>
+        <element label="Service Type" max_length="40" name="service_type" type="string"/>
+        <element label="Signal Content" max_length="40" name="signal_content" type="string"/>
+        <element label="Topology Sources" max_length="40" name="topology_sources" type="string"/>
+        <element display="true" label="Updated" max_length="40" name="updated" type="glide_date_time"/>
+    </element>
+</database>

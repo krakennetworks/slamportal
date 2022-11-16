@@ -24,15 +24,12 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>52f3632347b211105c2ec789826d4316</sys_id>
-        <sys_mod_count>0</sys_mod_count>
         <sys_name>MCP Services DS</sys_name>
         <sys_overrides/>
         <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
         <sys_update_name>sys_app_module_52f3632347b211105c2ec789826d4316</sys_update_name>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-11-02 22:21:39</sys_updated_on>
         <timeline_page/>
         <title>MCP Services DS</title>
         <uncancelable>false</uncancelable>

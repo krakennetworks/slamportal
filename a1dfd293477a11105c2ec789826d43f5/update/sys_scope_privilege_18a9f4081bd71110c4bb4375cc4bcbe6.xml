@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_scope_privilege">
+    <sys_scope_privilege action="INSERT_OR_UPDATE">
+        <operation>execute</operation>
+        <source_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</source_scope>
+        <status>allowed</status>
+        <sys_class_name>sys_scope_privilege</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-16 09:30:04</sys_created_on>
+        <sys_id>18a9f4081bd71110c4bb4375cc4bcbe6</sys_id>
+        <sys_name>ScriptableRESTResponse.haveError</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_scope_privilege_18a9f4081bd71110c4bb4375cc4bcbe6</sys_update_name>
+        <target_name>ScriptableRESTResponse.haveError</target_name>
+        <target_scope display_value="Global">global</target_scope>
+        <target_type>scriptable</target_type>
+    </sys_scope_privilege>
+</record_update>

@@ -47,14 +47,11 @@
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-11-02 23:07:58</sys_created_on>
-        <sys_id>349e2f6b47b211105c2ec789826d435e</sys_id>
         <sys_name>Packet Loss</sys_name>
         <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
         <sys_update_name>sys_dictionary_x_620670_sla_mon_0_mcpsla_import_u_packet_loss</sys_update_name>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-11-02 23:07:58</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>

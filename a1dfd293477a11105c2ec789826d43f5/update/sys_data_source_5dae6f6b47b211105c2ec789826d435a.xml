@@ -165,14 +165,11 @@ var device = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-11-02 23:14:59</sys_created_on>
         <sys_id>5dae6f6b47b211105c2ec789826d435a</sys_id>
-        <sys_mod_count>1</sys_mod_count>
         <sys_name>Libre Device DS</sys_name>
         <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
         <sys_update_name>sys_data_source_5dae6f6b47b211105c2ec789826d435a</sys_update_name>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-11-16 09:13:23</sys_updated_on>
         <table_name/>
         <type>CUSTOM</type>
         <use_batch_import>false</use_batch_import>

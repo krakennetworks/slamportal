@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="a5be5f6b477211105c2ec789826d43bd" label="Libre Current SLAs" max_length="40" name="x_620670_sla_mon_0_libre_current_slas" type="collection">
+        <element label="Availability" max_length="40" name="availability" type="float"/>
+        <element label="Device Id" max_length="40" name="device_id" type="integer"/>
+        <element label="Jitter" max_length="40" name="jitter" type="float"/>
+        <element label="Latency" max_length="40" name="latency" type="float"/>
+        <element label="Packet Ratio" max_length="40" name="packet_ratio" type="float"/>
+        <element label="Total Errors" max_length="40" name="total_errors" type="integer"/>
+        <element label="Total Packets" max_length="40" name="total_packets" type="integer"/>
+    </element>
+</database>

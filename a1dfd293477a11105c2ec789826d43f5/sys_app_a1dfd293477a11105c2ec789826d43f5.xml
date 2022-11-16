@@ -20,7 +20,7 @@
         <runtime_access_tracking>permissive</runtime_access_tracking>
         <scope>x_620670_sla_mon_0</scope>
         <scoped_administration>false</scoped_administration>
-        <short_description/>
+        <short_description>Portal to monitor SLAs from MCP and Libre</short_description>
         <source>x_620670_sla_mon_0</source>
         <store_correlation_id/>
         <store_url/>
@@ -29,9 +29,6 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-11-01 22:45:30</sys_created_on>
         <sys_id>a1dfd293477a11105c2ec789826d43f5</sys_id>
-        <sys_mod_count>0</sys_mod_count>
-        <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-11-01 22:45:30</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <uninstall_blocked>false</uninstall_blocked>
