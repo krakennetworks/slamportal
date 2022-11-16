@@ -8,7 +8,17 @@
         <connection_url_parameters/>
         <csv_delimiter/>
         <data_in_single_column>false</data_in_single_column>
-        <data_loader><![CDATA[(function loadData(import_set_table, data_source, import_log, last_success_import_time) {
+        <data_loader><![CDATA[/*---------------------------------------------------------------------------------
+ *
+ *   Copyright © 2022 Kraken Networks, Inc. and AppVizo, LLC. All Rights Reserved.
+ *   File: C:\Projects\ServiceNow\Apps\SLAMonitor\InboundIntegrations\DataSources\LibreSlaDS.js
+ *   Version 0.0.1
+ *   Note: Original code from Sean and Bernie.
+ *
+ *----------------------------------------------------------------------------------*/
+
+
+(function loadData(import_set_table, data_source, import_log, last_success_import_time) {
 	//Set up Import Set Table
 	import_set_table.addColumn("Device Id");
 	import_set_table.addColumn("Jitter");
@@ -19,24 +29,25 @@
 	import_set_table.addColumn("Availability");
 	
 	//Import Data
-	var connection = new LibreConnection();
-	var devices = connection.getDevices();
+	var libre = new LibreConnection();
+	var devices = libre.getDevices();
 	for(var i in devices){
-		var dId = devices[i]['device_id'];
-		var availability = connection.getDeviceAvailability(dId);
-		var jitterGraph = connection.getDeviceJitterGraph(dId);
-		var latencyGraph = connection.getDeviceLatencyGraph(dId);
-		var dpr = connection.getDeviceDPR(dId);
+		var device_id = devices[i]['device_id'];
+		var availability = libre.getDeviceAvailability(device_id);
+		var jitter = libre.getDeviceJitter(device_id);
+		var latency = libre.getDeviceLatency(device_id);
+		var dpr = libre.getDeviceDPR(device_id);
 		
-		var map = {
-			'Device Id': dId,
-			'Jitter': jitterGraph,
-			'Latency': latencyGraph,
+		var row = {
+			'Device Id': device_id,
+			'Jitter': jitter.src2dst_avg,
+			'Latency': latency.average,
 			'Total Packets': dpr['packets'],
 			'Total Errors': dpr['errors'],
 			'Packet Ratio': dpr['total_ratio'],
+			'Availability': availability
 		};
-		import_set_table.insert(map);
+		import_set_table.insert(row);
 	}
 
 })(import_set_table, data_source, import_log, last_success_import_time);]]></data_loader>
@@ -90,14 +101,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-11-02 23:26:58</sys_created_on>
         <sys_id>fc507f6b47b211105c2ec789826d4321</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>Libre SLA DS</sys_name>
         <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
         <sys_update_name>sys_data_source_fc507f6b47b211105c2ec789826d4321</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-11-02 23:26:58</sys_updated_on>
+        <sys_updated_on>2022-11-16 09:13:45</sys_updated_on>
         <table_name/>
         <type>CUSTOM</type>
         <use_batch_import>false</use_batch_import>
