@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller=function() {
+	/* widget controller */
+	var c = this;
+	var passed = c.data.graphs;
+	c.graphs = passed;
+	
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>libre_image_graph_view</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>Libre Image Graph View</name>
+        <option_schema/>
+        <public>true</public>
+        <roles>x_620670_sla_mon_0.client,x_620670_sla_mon_0.admin</roles>
+        <script><![CDATA[(function(){
+	var graph_table = 'x_620670_sla_mon_0_temp_libre_site_graphs';
+	if (input == undefined){
+		initialSetup();
+	}
+	function findUnique(table,field) {
+		var af = 'sum';
+		var query = new global.GlideQuery(table).groupBy(field).aggregate(af,'duration').select();
+		var uniques = [];
+		query.forEach(function(row){uniques.push(row['group'][field]);});
+		return uniques;
+	}
+
+	function initialSetup(){
+		data.siteDropDown = findUnique(graph_table, 'site');
+		data.slaDropDown = findUnique(graph_table, 'sla_type');
+		data.dateDropDown = findUnique(graph_table, 'start_time');
+		data.graphs = recordHandler(graph_table, 'start_time', '2022-11-20 19:00:00');
+		data.date = new Date().toDateString();
+	}
+	
+	function recordHandler(table, field, value){
+		results = [];
+		var gr = new global.GlideQuery(table).where(field, value).select().toArray(10);
+		var attachment = new GlideSysAttachment();
+		for(var i in gr){
+			var agr = attachment.getAttachments(table, gr[i]['sys_id']);
+			results.push(agr);
+		}
+		return results;
+	}
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-22 05:04:34</sys_created_on>
+        <sys_id>e9667ebd1bdbd510c4bb4375cc4bcbef</sys_id>
+        <sys_name>Libre Image Graph View</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_widget_e9667ebd1bdbd510c4bb4375cc4bcbef</sys_update_name>
+        <template><![CDATA[<section class='daily-graph-container'>
+  <h1>
+    {{c.data.date}}
+  </h1>
+  {{c.data.graphs}}
+  <div ng-repeat = "x in c.data.graphs" class = 'grid box'>
+    <svg>{{x}}</svg>
+  </div>
+</section>]]></template>
+    </sp_widget>
+</record_update>

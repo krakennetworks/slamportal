@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="dd6c70751b935110c4bb4375cc4bcb9b" max_length="40" name="x_620670_sla_mon_0_temp_libre_site_graphs" type="collection">
+        <element label="Duration" max_length="40" name="duration" type="integer"/>
+    </element>
+</database>
