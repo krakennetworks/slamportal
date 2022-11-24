@@ -62,7 +62,7 @@ $chart-offset: calc(#{$circum} * 0.25);</css_variables>
         <search_application/>
         <search_results_configuration/>
         <sp_chat_queue/>
-        <sp_rectangle_menu/>
+        <sp_rectangle_menu display_value="SLAMP Menu">5f4ad52e1b579190c4bb4375cc4bcb54</sp_rectangle_menu>
         <sys_class_name>sp_portal</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-11-02 23:36:59</sys_created_on>
@@ -72,7 +72,7 @@ $chart-offset: calc(#{$circum} * 0.25);</css_variables>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
         <sys_update_name>sp_portal_06b4bbef47b211105c2ec789826d436c</sys_update_name>
-        <theme/>
+        <theme display_value="La Jolla">a7a6e78277002300a6e592718a10617a</theme>
         <title>SLA Monitoring Portal</title>
         <ts_index_group/>
         <url_suffix>slamp</url_suffix>
