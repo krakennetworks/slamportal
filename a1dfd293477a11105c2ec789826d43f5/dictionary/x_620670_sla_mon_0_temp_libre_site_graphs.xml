@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
-    <element db_object_id="dd6c70751b935110c4bb4375cc4bcb9b" max_length="40" name="x_620670_sla_mon_0_temp_libre_site_graphs" type="collection">
+    <element db_object_id="dd6c70751b935110c4bb4375cc4bcb9b" label="Temp Libre Site Graphs" max_length="40" name="x_620670_sla_mon_0_temp_libre_site_graphs" type="collection">
         <element label="Duration" max_length="40" name="duration" type="integer"/>
+        <element label="End Time" max_length="40" name="end_time" type="string"/>
+        <element label="Graph" max_length="40" name="graph" type="user_image"/>
+        <element label="Recording Device" max_length="40" name="recording_device" type="string"/>
+        <element label="Site" max_length="40" name="site" type="string"/>
+        <element choice="3" default="latency" label="SLA Type" mandatory="true" max_length="40" name="sla_type" type="string">
+            <choice>
+                <element inactive_on_update="false" label="Availability" value="availability"/>
+                <element inactive_on_update="false" label="Jitter" value="jitter"/>
+                <element inactive_on_update="false" label="Latency" value="latency"/>
+                <element inactive_on_update="false" label="Packet Loss(Count)" value="packet_loss"/>
+            </choice>
+        </element>
+        <element label="Start Time" max_length="40" name="start_time" type="string"/>
     </element>
 </database>

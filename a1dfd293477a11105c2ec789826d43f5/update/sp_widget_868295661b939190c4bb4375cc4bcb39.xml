@@ -13,49 +13,79 @@
 
 	function getAttachments() {
 		$scope.server.update().then(function() {
-			$scope.attachments = $scope.data.attachments;
-			for(var i in $scope.attachments){
-				var a = $scope.attachments[i];
-				var snah = snAttachmentHandler.getViewUrl(a.sys_id);
-				$scope.vurls.push(snah);
+			$scope.graphs = $scope.data.graphs;
+			for(var i in $scope.graphs){
+				var a = $scope.graphs[i];
+				var snah = snAttachmentHandler.getViewUrl(a.attachment.sys_id);
+				var ginfo = {
+					'url': snah,
+					'sla': a.sla,
+					'recdev': a.recdev,
+					'start': a.start
+				}
+				$scope.vurls.push(ginfo);
 			}
-			$scope.anyAttachments = $scope.attachments && $scope.attachments.length != 0;
+			$scope.anyAttachments = $scope.graphs && $scope.graphs.length != 0;
 		});
 	}
 	getAttachments();
 };]]></client_script>
         <controller_as>c</controller_as>
-        <css/>
+        <css>
+.daily-graph-container {
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+  h1 {
+    text-align: center;
+    margin: 0 auto;
+  }
+  .lib-sla-graph{
+    width: 95%;
+    height: auto;
+  }
+}</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
         <docs/>
         <field_list/>
         <has_preview>true</has_preview>
-        <id>libre_image_graph_view</id>
+        <id>libre_all_sites_sla_weekly</id>
         <internal>false</internal>
         <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
-        <name>Libre Image Graph View</name>
+        <name>Libre All Sites SLA Weekly</name>
         <option_schema/>
         <public>true</public>
-        <roles>x_620670_sla_mon_0.client,x_620670_sla_mon_0.admin</roles>
+        <roles/>
         <script><![CDATA[(function(){
-	var ATTACHMENT_LIMIT = 20;
+	var ATTACHMENT_LIMIT = 12;
 	var graph_table = 'x_620670_sla_mon_0_temp_libre_site_graphs';
 
-	data.attachments = [];
+	data.graphs = [];
 	data.table = graph_table;
 	
 	var gsa = new GlideSysAttachment();
 	var gr = new GlideRecord(data.table);
+	gr.addQuery('site','All');
+	gr.addQuery('duration', 168);
+	gr.orderByDesc('sys_created_on');
 	gr.query();
 	
 	
-	while (gr.next() && data.attachments.length < ATTACHMENT_LIMIT) {
+	while (gr.next() && data.graphs.length < ATTACHMENT_LIMIT) {
 		var grAttachment = gsa.getAttachments(graph_table, gr.sys_id);
 		
-		while (grAttachment.next() && data.attachments.length < ATTACHMENT_LIMIT) {
-				data.attachments.push(getAttachmentInfo(grAttachment));
+		while (grAttachment.next() && data.graphs.length < ATTACHMENT_LIMIT) {
+			var attachment = getAttachmentInfo(grAttachment);
+			var graph_info = {
+				"attachment": attachment,
+				"site":gr.getValue('site'),
+				"sla":gr.getValue('sla_type'),
+				"recdev":gr.getValue('recording_device'),
+				"start":gr.getValue('start_time')
+			};
+			data.graphs.push(graph_info);
 		}
 	}
 
@@ -77,16 +107,19 @@
         <servicenow>false</servicenow>
         <sys_class_name>sp_widget</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2022-11-22 05:04:34</sys_created_on>
-        <sys_id>e9667ebd1bdbd510c4bb4375cc4bcbef</sys_id>
-        <sys_name>Libre Image Graph View</sys_name>
+        <sys_created_on>2022-11-24 05:43:41</sys_created_on>
+        <sys_id>868295661b939190c4bb4375cc4bcb39</sys_id>
+        <sys_name>Libre All Sites SLA Weekly</sys_name>
         <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
-        <sys_update_name>sp_widget_e9667ebd1bdbd510c4bb4375cc4bcbef</sys_update_name>
+        <sys_update_name>sp_widget_868295661b939190c4bb4375cc4bcb39</sys_update_name>
         <template><![CDATA[<section class='daily-graph-container'>
-  <div ng-repeat = "x in vurls" class = 'grid box'>
-    <img src="{{x}}"/>
+  <h1>
+     Last Week's Graphs for all sites
+  </h1>
+  <div ng-repeat = "x in vurls">
+    <img class="lib-sla-graph" src="{{x.url}}"/>
   </div>
 </section>]]></template>
     </sp_widget>

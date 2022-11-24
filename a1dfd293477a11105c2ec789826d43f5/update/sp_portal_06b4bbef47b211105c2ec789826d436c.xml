@@ -48,7 +48,7 @@ $chart-offset: calc(#{$circum} * 0.25);</css_variables>
         <enable_ais>false</enable_ais>
         <enable_favorites>false</enable_favorites>
         <hide_portal_name>false</hide_portal_name>
-        <homepage/>
+        <homepage display_value="daily_graphs">0b45727d1b9bd510c4bb4375cc4bcb7b</homepage>
         <icon/>
         <kb_knowledge_base/>
         <kb_knowledge_page/>

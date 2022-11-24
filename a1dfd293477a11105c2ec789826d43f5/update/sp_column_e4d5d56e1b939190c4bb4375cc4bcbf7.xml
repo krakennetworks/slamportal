@@ -2,19 +2,19 @@
     <sp_column action="INSERT_OR_UPDATE">
         <class_name/>
         <order>1</order>
-        <size>6</size>
+        <size>12</size>
         <size_lg/>
         <size_sm/>
         <size_xs/>
-        <sp_row display_value="1">4d16f63d1bdbd510c4bb4375cc4bcbf1</sp_row>
+        <sp_row display_value="1">e0d5d56e1b939190c4bb4375cc4bcbf5</sp_row>
         <sys_class_name>sp_column</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2022-11-22 05:03:10</sys_created_on>
-        <sys_id>0116f63d1bdbd510c4bb4375cc4bcbf4</sys_id>
+        <sys_created_on>2022-11-24 05:58:03</sys_created_on>
+        <sys_id>e4d5d56e1b939190c4bb4375cc4bcbf7</sys_id>
         <sys_name>1</sys_name>
         <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
         <sys_policy/>
         <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
-        <sys_update_name>sp_column_0116f63d1bdbd510c4bb4375cc4bcbf4</sys_update_name>
+        <sys_update_name>sp_column_e4d5d56e1b939190c4bb4375cc4bcbf7</sys_update_name>
     </sp_column>
 </record_update>
