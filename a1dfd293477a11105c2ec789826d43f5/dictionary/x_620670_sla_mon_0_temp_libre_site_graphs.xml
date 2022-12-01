@@ -11,6 +11,7 @@
                 <element inactive_on_update="false" label="Jitter" value="jitter"/>
                 <element inactive_on_update="false" label="Latency" value="latency"/>
                 <element inactive_on_update="false" label="Packet Loss(Count)" value="packet_loss"/>
+                <element inactive_on_update="false" label="Round Trip Time" value="rtt"/>
             </choice>
         </element>
         <element label="Start Time" max_length="40" name="start_time" type="string"/>

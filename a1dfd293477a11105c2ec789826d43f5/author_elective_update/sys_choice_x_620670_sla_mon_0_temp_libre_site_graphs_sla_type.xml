@@ -76,5 +76,21 @@
             <sys_domain_path>/</sys_domain_path>
             <value>packet_loss</value>
         </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>sla_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Round Trip Time</label>
+            <language>en</language>
+            <name>x_620670_sla_mon_0_temp_libre_site_graphs</name>
+            <sequence/>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-30 20:27:59</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <value>rtt</value>
+        </sys_choice>
     </sys_choice>
 </record_update>
