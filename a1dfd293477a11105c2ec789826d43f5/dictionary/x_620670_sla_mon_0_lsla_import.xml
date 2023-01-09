@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="24f27f6f47b211105c2ec789826d43a0" extends="sys_import_set_row" label="Libre SLA DS" max_length="40" name="x_620670_sla_mon_0_lsla_import" type="collection">
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Availability" label="Availability" max_length="40" name="u_availability" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Device Id" label="Device Id" max_length="40" name="u_device_id" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Jitter" label="Jitter" max_length="40" name="u_jitter" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Latency" label="Latency" max_length="40" name="u_latency" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Packet Ratio" label="Packet Ratio" max_length="40" name="u_packet_ratio" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Total Errors" label="Total Errors" max_length="40" name="u_total_errors" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Total Packets" label="Total Packets" max_length="40" name="u_total_packets" type="string"/>
+    </element>
+</database>

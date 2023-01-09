@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container">
+    <sp_container action="INSERT_OR_UPDATE">
+        <background_color/>
+        <background_image/>
+        <background_style>default</background_style>
+        <bootstrap_alt>false</bootstrap_alt>
+        <class_name/>
+        <container_class_name/>
+        <name>Weekly Libre Graphs - Container 1</name>
+        <order>1</order>
+        <sp_page display_value="weekly_libre_graphs">5b0711261b179190c4bb4375cc4bcbc8</sp_page>
+        <subheader>false</subheader>
+        <sys_class_name>sp_container</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 06:08:46</sys_created_on>
+        <sys_id>194891ae1b179190c4bb4375cc4bcbdc</sys_id>
+        <sys_name>Weekly Libre Graphs - Container 1</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_container_194891ae1b179190c4bb4375cc4bcbdc</sys_update_name>
+        <title/>
+        <width>container</width>
+    </sp_container>
+</record_update>

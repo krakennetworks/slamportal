@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_620670_sla_mon_0.LibreConnection</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Script used to connect to LibreNMS instance. Make sure to add the correct host and API token in the script below.</description>
+        <name>LibreConnection</name>
+        <script><![CDATA[/*---------------------------------------------------------------------------------
+ *
+ *   Copyright © 2022 Kraken Networks, Inc. and AppVizo, LLC. All Rights Reserved.
+ *   File: C:\Projects\ServiceNow\Apps\SLAMonitor\ServerDevelopment\ScriptInclude\LibreConnection.js
+ *   Version 0.0.1
+ *
+ *   Notes: Original connection code from Sean and Bernie.
+ *
+ *----------------------------------------------------------------------------------*/
+
+var testing = true;
+
+var LibreConnection = Class.create();
+LibreConnection.prototype = {
+  initialize: function () {
+    // this.host = "http://10.224.119.19/api/v0";		// Deployment
+    this.devhost = "http://192.168.3.234/api/v0"; // Dev test
+    this.token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // Sean
+    this.githost = "https://github.com/thaneplummer/SvcNowLibre"; // tkp github test site
+    this.github_token = "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"; // Github token used in tests.
+    this.host = testing ? this.githost : this.devhost;
+    this.raw = "https://raw.githubusercontent.com/thaneplummer/SvcNowLibre/";
+  },
+
+  collectPacketRatio: function (c, e) {
+    if (e < 1) {
+      return 0.0;
+    }
+    if (count < 1) {
+      return 100.0;
+    }
+    return (e / c) * 100;
+  },
+
+  defaultValue: function (variable, value) {
+    return (variable = variable !== undefined ? variable : value);
+  },
+
+  sendRequest: function (endpoint, method) {
+    method = this.defaultValue(method, "get");
+    var verbose; // = 0;
+
+    var request = new sn_ws.RESTMessageV2();
+    var url =
+      endpoint.startsWith(this.host) || endpoint.startsWith(this.raw)
+        ? endpoint
+        : this.host + endpoint;
+
+    request.setHttpMethod(method);
+    request.setEndpoint(url);
+    request.setRequestHeader("Content-type", "application/json");
+    if (testing) {
+      request.setRequestHeader("Authorization", "token " + this.github_token);
+    } else {
+      request.setRequestHeader("X-Auth-Token", this.token);
+    }
+
+    if (testing) {
+      gs.addInfoMessage("URL: " + url);
+      gs.addInfoMessage(
+        "Headers: " + JSON.stringify(request.getRequestHeaders())
+      );
+    }
+
+    var response = request.execute();
+    var responseBody = response.haveError()
+      ? response.getErrorMessage()
+      : response.getBody();
+    var status = response.getStatusCode();
+    if (testing && verbose) {
+      gs.addInfoMessage("Status: " + status);
+      gs.addInfoMessage("Response: " + responseBody);
+    }
+    return responseBody;
+  },
+
+  sendGraphRequest: function (endpoint, method) {
+    var request = new sn_ws.RESTMessageV2();
+    var url =
+      endpoint.startsWith(this.host) || endpoint.startsWith(this.raw)
+        ? endpoint
+        : this.host + endpoint;
+
+    method = this.defaultValue(method, "GET");
+    request.setHttpMethod(method);
+    request.setEndpoint(url);
+    if (testing) {
+      request.setRequestHeader("Authorization", "token " + this.github_token);
+    } else {
+      request.setRequestHeader("X-Auth-Token", this.token);
+    }
+
+    var response = request.execute();
+    var responseBody = response.haveError()
+      ? response.getErrorMessage()
+      : response.getBody();
+    return responseBody;
+  },
+
+  getDevices: function () {
+    var endpoint = this.host + "/devices";
+    if (testing) {
+      endpoint = this.raw + "/main/test/samples/devices/devices.json";
+    }
+    var jsonstr = this.sendRequest(endpoint, "get");
+    var results = JSON.parse(jsonstr);
+    return results.devices;
+  },
+
+  getDeviceInfo: function (deviceId) {
+    var endpoint = this.host + "/devices/" + deviceId.toString();
+    var resp = this.sendRequest(endpoint, "GET");
+    var device = resp["devices"][0];
+    return {
+      deviceId: device["device_id"],
+      hostname: device["hostname"],
+      ipAddress: device["ip"],
+      hardware: device["hardware"],
+      location: device["location"],
+      serialNum: device["serial"],
+      sysName: device["sysName"],
+      sysDescr: device["sysDescr"],
+      version: device["version"],
+    };
+  },
+
+  getDeviceAvailability: function (deviceId) {
+	var resp;
+    var endpoint = this.host + "/devices/" + deviceId.toString() + "/availability";
+    if (testing) {
+		resp = {
+			"status": "ok",
+			"availability": [
+				{
+					"duration": 2592000,
+					"availability_perc": "99.779000"
+				},
+				{
+					"duration": 31536000,
+					"availability_perc": "99.973000"
+				}
+			]
+		};
+    }
+	else {
+    	resp = this.sendRequest(endpoint, "GET");
+	}
+    if (resp["availability"].length > 0) {
+      return resp["availability"][-1]["availability_perc"];
+    }
+	return "n/a";
+  },
+
+  getDeviceJitterGraph: function (deviceId) {
+    var endpoint =
+      this.host + "/devices/" + deviceId.toString() + "/device_sla_jitter";
+    if (testing) {
+      var name = sla_map[deviceId] + ".svg";
+      endpoint =
+        this.raw + "/main/test/samples/device_sla_jitter/" + encodeURI(name);
+    }
+    var resp = this.sendGraphRequest(endpoint, "GET");
+    return resp;
+  },
+
+  getDeviceJitterLossGraph: function (deviceId) {
+    var endpoint =
+      this.host + "/devices/" + deviceId.toString() + "/device_sla_jitter-loss";
+    if (testing) {
+      var name = sla_map[deviceId] + ".svg";
+      endpoint =
+        this.raw +
+        "/main/test/samples/device_sla_jitter-loss/" +
+        encodeURI(name);
+    }
+    var resp = this.sendGraphRequest(endpoint, "GET");
+    return resp;
+  },
+
+  getDeviceLatencyGraph: function (deviceId) {
+    var endpoint =
+      this.host + "/devices/" + deviceId.toString() + "/device_ping_perf";
+    if (testing) {
+      var name = sla_map[deviceId] + ".svg";
+      endpoint = this.raw + "/main/test/samples/device_sla/" + encodeURI(name);
+    }
+    var resp = this.sendGraphRequest(endpoint, "GET");
+    return resp;
+  },
+
+  getDeviceDPR: function (deviceId) {
+    var ports = this.getDevicePorts(deviceId);
+
+    var packets = 0;
+    var es = 0;
+
+    for (p in ports) {
+      var endpoint =
+        this.host +
+        "/devices/" +
+        deviceId.toString() +
+        "/ports/" +
+        ports[p].toString();
+      var resp = this.sendRequest(endpoint, "GET");
+      if (resp["status"] == "ok") {
+        packets += resp["port"]["ifInUcastPkts"];
+        es += resp["port"]["ifInErrors"];
+        packets += resp["port"]["ifOutUcastPkts"];
+        es += resp["port"]["ifOutErrors"];
+      }
+    }
+
+    return {
+      packets: packets,
+      errors: es,
+      total_ratio: this.collectPacketRatio(packets, es),
+    };
+  },
+
+  getDevicePorts: function (deviceId) {
+    var endpoint = this.host + "/devices/" + deviceId.toString() + "/ports";
+    var resp = this.sendRequest(endpoint, "GET");
+    portNames = [];
+    for (i in resp["ports"]) {
+      portNames.push(resp["ports"][i]["ifName"]);
+    }
+    return portNames;
+  },
+
+  parseSVG: function (xml) {
+    var texts = []; // Our return object.
+
+    var xmldoc = new XMLDocument2();
+    xmldoc.parseXML(xml);
+    var root = xmldoc.getDocumentElement(); // Set parser to root.
+
+    // Get the glyph defintions.
+    var defnode = xmldoc.getNode("/svg/defs/g"); // Uses limited XPath query structure.
+    glyphlookup = getGlyphLookup(defnode);
+
+    // Get the text.
+    var grabText = false;
+    var node = xmldoc.getNode("/svg/g");
+    var iter = node.getChildNodeIterator();
+    while (iter.hasNext()) {
+      var n = iter.next();
+      var name = n.getNodeName();
+      var attrs = n.getAttributes();
+
+      // IMPORTANT!! The line below defines the start of the text of interest.
+      // Change this as needed to get the correct XML.
+      if (name === "path" && attrs["style"].startsWith(" stroke:none;")) {
+        grabText = true;
+      }
+
+      if (grabText && name === "g") {
+        var letters = getLetters(n);
+        if (letters.length > 0) {
+          texts.push(letters);
+        }
+      }
+    }
+    // if (testing) {
+    // 	gs.info(text.toString());
+    // }
+
+    return texts;
+  },
+
+  getDeviceLatency: function (device_id) {
+    var latency = { units: "ms" };
+    var xml = this.getDeviceLatencyGraph(device_id);
+    var texts = this.parseSVG(xml);
+    if (texts.length === 4) {
+      latency.average = texts[0];
+      latency.rtt_cur = texts[1];
+      latency.rtt_min = texts[2];
+      latency.rtt_max = texts[3];
+    }
+
+    return latency;
+  },
+
+  getDeviceJitter: function (device_id) {
+    var jitter = { units: "ms" };
+    var xml = this.getDeviceJitterGraph(device_id);
+    var texts = this.parseSVG(xml);
+    if (texts.length === 8) {
+      jitter.src2dst_cur = texts[0];
+      jitter.src2dst_min = texts[1];
+      jitter.src2dst_max = texts[2];
+      jitter.src2dst_avg = texts[3];
+      jitter.dst2src_cur = texts[4];
+      jitter.dst2src_min = texts[5];
+      jitter.dst2src_max = texts[6];
+      jitter.dst2src_avg = texts[7];
+    }
+    return jitter;
+  },
+
+  getDeviceJitterLoss: function (device_id) {
+    var loss = { units: "pkts" };
+    var xml = this.getDeviceJitterLossGraph(device_id);
+    var texts = this.parseSVG(xml);
+    if (texts.length === 8) {
+      loss.src2dst_cur = texts[0];
+      loss.src2dst_min = texts[1];
+      loss.src2dst_max = texts[2];
+      loss.src2dst_avg = texts[3];
+      loss.dst2src_cur = texts[4];
+      loss.dst2src_min = texts[5];
+      loss.dst2src_max = texts[6];
+      loss.dst2src_avg = texts[7];
+    }
+    return loss;
+  },
+
+  type: "LibreConnection",
+};
+
+
+// -----------------   LIBRE SLA CODES  -----------------
+
+var sla_map = {
+  124: "Bangkok",
+  125: "Manila",
+  126: "Zambuanga",
+  127: "New Delhi",
+  128: "Seoul",
+  129: "Tokyo",
+  130: "Yokota",
+  131: "Wellington",
+  134: "Chennai",
+  135: "Chiang Mai",
+  136: "Colombo",
+  137: "Dhaka",
+  138: "Guangzhou",
+  139: "Hanoi",
+  140: "Hong Kong",
+  141: "Kathmandu",
+  142: "Kolkata",
+  143: "Kuala Lampur",
+  144: "Mumbai",
+  145: "Phnom Penh",
+  146: "Shanghai",
+  147: "Shenyang",
+  148: "Surabaya",
+  149: "Taipei",
+  150: "Canberra",
+  151: "Beijing",
+  152: "Jakarta",
+  153: "Port Moresby",
+  154: "Rangon",
+  155: "Suva",
+  156: "Uluanbaatar",
+  157: "Vientiane",
+  158: "Guam 1",
+  159: "Guam 2",
+  160: "Kolonia",
+  161: "Singapore 1",
+  162: "Singapore 2",
+  163: "RRF Yokota 1",
+  164: "RRF Yokota 2",
+  165: "Sydney Martin Place",
+  166: "Yokosuka",
+  177: "Equinix TY1 Interconnect - TYO-AP",
+  178: "Equinix TY3 Interconnect - TOK-AP",
+  179: "Equinix SG1 Interconnect - SGA-AP",
+  180: "Equinix SG2 Interconnect - SGW-AP",
+  181: "Equinix SY4 Interconnect - SPT-AP",
+  182: "Equinix SY4 Interconnect - SYT-AP",
+  183: "Brandy PE1",
+  184: "Brandy PE2",
+  185: "Denver Fed Ctr PE1",
+  186: "Denver Fed Ctr PE2",
+  187: "Guam B150 PE1",
+  188: "Guam B150 PE2",
+  190: "Guam GNC",
+  191: "Guam TAN",
+  192: "Tokyo TY3",
+  193: "Tokyo TY1",
+  194: "Singapore SG1",
+  195: "Singapore SG2",
+  196: "Sydney SY4",
+};
+
+// -----------------   GLYPH DECOMPOSITION CODE  -----------------
+
+var cmma = {
+  0: "M 2.59375 -3.5 C 2.59375 -3.632812 2.660156 -3.75 2.796875 -3.84375 C 2.941406 -3.945312 3.109375 -4 3.296875 -4 C 3.492188 -4 3.664062 -3.945312 3.8125 -3.84375 C 3.957031 -3.75 4.03125 -3.632812 4.03125 -3.5 C 4.03125 -3.363281 3.957031 -3.242188 3.8125 -3.140625 C 3.675781 -3.046875 3.503906 -3 3.296875 -3 C 3.097656 -3 2.929688 -3.046875 2.796875 -3.140625 C 2.660156 -3.234375 2.59375 -3.351562 2.59375 -3.5 Z M 3.3125 -7 C 2.8125 -7 2.4375 -6.75 2.1875 -6.25 C 1.9375 -5.757812 1.8125 -5.007812 1.8125 -4 C 1.8125 -2.988281 1.9375 -2.234375 2.1875 -1.734375 C 2.4375 -1.242188 2.8125 -1 3.3125 -1 C 3.8125 -1 4.1875 -1.242188 4.4375 -1.734375 C 4.6875 -2.234375 4.8125 -2.988281 4.8125 -4 C 4.8125 -5.007812 4.6875 -5.757812 4.4375 -6.25 C 4.1875 -6.75 3.8125 -7 3.3125 -7 Z M 3.3125 -8 C 4.164062 -8 4.8125 -7.660156 5.25 -6.984375 C 5.6875 -6.304688 5.90625 -5.3125 5.90625 -4 C 5.90625 -2.6875 5.6875 -1.691406 5.25 -1.015625 C 4.8125 -0.335938 4.164062 0 3.3125 0 C 2.457031 0 1.8125 -0.335938 1.375 -1.015625 C 0.9375 -1.691406 0.71875 -2.6875 0.71875 -4 C 0.71875 -5.3125 0.9375 -6.304688 1.375 -6.984375 C 1.8125 -7.660156 2.457031 -8 3.3125 -8 Z M 3.3125 -8 ",
+  1: "M 1.453125 -1 L 3.140625 -1 L 3.140625 -7 L 1.328125 -7 L 1.328125 -8 L 4.21875 -8 L 4.21875 -1 L 5.875 -1 L 5.875 0 L 1.453125 0 Z M 1.453125 -1 ",
+  2: "M 2 -1 L 5.6875 -1 L 5.6875 0 L 0.8125 0 L 0.8125 -1 C 1.476562 -1.664062 2.0625 -2.253906 2.5625 -2.765625 C 3.0625 -3.273438 3.410156 -3.640625 3.609375 -3.859375 C 3.960938 -4.265625 4.203125 -4.59375 4.328125 -4.84375 C 4.453125 -5.101562 4.515625 -5.367188 4.515625 -5.640625 C 4.515625 -6.066406 4.378906 -6.398438 4.109375 -6.640625 C 3.847656 -6.878906 3.488281 -7 3.03125 -7 C 2.707031 -7 2.363281 -6.914062 2 -6.75 C 1.644531 -6.582031 1.269531 -6.332031 0.875 -6 L 0.875 -7 C 1.238281 -7.332031 1.597656 -7.582031 1.953125 -7.75 C 2.316406 -7.914062 2.675781 -8 3.03125 -8 C 3.8125 -8 4.441406 -7.796875 4.921875 -7.390625 C 5.398438 -6.992188 5.640625 -6.46875 5.640625 -5.8125 C 5.640625 -5.476562 5.554688 -5.144531 5.390625 -4.8125 C 5.234375 -4.476562 4.976562 -4.113281 4.625 -3.71875 C 4.425781 -3.488281 4.132812 -3.175781 3.75 -2.78125 C 3.363281 -2.382812 2.78125 -1.789062 2 -1 Z M 2 -1 ",
+  3: "M 4.171875 -4.5 C 4.691406 -4.351562 5.09375 -4.097656 5.375 -3.734375 C 5.65625 -3.378906 5.796875 -2.929688 5.796875 -2.390625 C 5.796875 -1.648438 5.546875 -1.066406 5.046875 -0.640625 C 4.554688 -0.210938 3.867188 0 2.984375 0 C 2.617188 0 2.242188 -0.0820312 1.859375 -0.25 C 1.472656 -0.425781 1.097656 -0.675781 0.734375 -1 L 0.734375 -2 C 1.097656 -1.664062 1.457031 -1.414062 1.8125 -1.25 C 2.164062 -1.082031 2.519531 -1 2.875 -1 C 3.46875 -1 3.921875 -1.128906 4.234375 -1.390625 C 4.554688 -1.648438 4.71875 -2.023438 4.71875 -2.515625 C 4.71875 -2.972656 4.554688 -3.332031 4.234375 -3.59375 C 3.921875 -3.863281 3.492188 -4 2.953125 -4 L 2.125 -4 L 2.125 -5 L 2.953125 -5 C 3.453125 -5 3.835938 -5.082031 4.109375 -5.25 C 4.390625 -5.425781 4.53125 -5.671875 4.53125 -5.984375 C 4.53125 -6.304688 4.398438 -6.554688 4.140625 -6.734375 C 3.878906 -6.910156 3.507812 -7 3.03125 -7 C 2.71875 -7 2.390625 -6.914062 2.046875 -6.75 C 1.710938 -6.582031 1.359375 -6.332031 0.984375 -6 L 0.984375 -7 C 1.421875 -7.332031 1.804688 -7.582031 2.140625 -7.75 C 2.472656 -7.914062 2.773438 -8 3.046875 -8 C 3.816406 -8 4.4375 -7.820312 4.90625 -7.46875 C 5.375 -7.113281 5.609375 -6.644531 5.609375 -6.0625 C 5.609375 -5.664062 5.484375 -5.332031 5.234375 -5.0625 C 4.992188 -4.800781 4.640625 -4.613281 4.171875 -4.5 Z M 4.171875 -4.5 ",
+  4: "M 3.953125 -7.046875 L 1.421875 -3 L 3.953125 -3 Z M 3.765625 -8 L 5.03125 -8 L 5.03125 -3 L 6.09375 -3 L 6.09375 -2 L 5.03125 -2 L 5.03125 0 L 3.953125 0 L 3.953125 -2 L 0.546875 -2 L 0.546875 -3.015625 Z M 3.765625 -8 ",
+  5: "M 1.109375 -8 L 5.171875 -8 L 5.171875 -7 L 2.09375 -7 L 2.09375 -4.8125 C 2.25 -4.875 2.40625 -4.921875 2.5625 -4.953125 C 2.71875 -4.984375 2.875 -5 3.03125 -5 C 3.863281 -5 4.519531 -4.773438 5 -4.328125 C 5.488281 -3.878906 5.734375 -3.269531 5.734375 -2.5 C 5.734375 -1.726562 5.476562 -1.117188 4.96875 -0.671875 C 4.457031 -0.222656 3.757812 0 2.875 0 C 2.445312 0 2.054688 0 1.703125 0 C 1.359375 0 1.046875 0 0.765625 0 L 0.765625 -1 C 1.097656 -1 1.429688 -1 1.765625 -1 C 2.097656 -1 2.4375 -1 2.78125 -1 C 3.382812 -1 3.847656 -1.128906 4.171875 -1.390625 C 4.492188 -1.648438 4.65625 -2.019531 4.65625 -2.5 C 4.65625 -2.96875 4.488281 -3.332031 4.15625 -3.59375 C 3.820312 -3.863281 3.351562 -4 2.75 -4 C 2.457031 -4 2.171875 -4 1.890625 -4 C 1.617188 -4 1.359375 -4 1.109375 -4 Z M 1.109375 -8 ",
+  6: "M 5.328125 -8 L 5.328125 -7 C 5.097656 -7 4.859375 -7 4.609375 -7 C 4.359375 -7 4.09375 -7 3.8125 -7 C 3.125 -7 2.601562 -6.726562 2.25 -6.1875 C 1.894531 -5.644531 1.71875 -4.847656 1.71875 -3.796875 C 1.882812 -4.179688 2.117188 -4.476562 2.421875 -4.6875 C 2.734375 -4.894531 3.085938 -5 3.484375 -5 C 4.253906 -5 4.847656 -4.78125 5.265625 -4.34375 C 5.691406 -3.914062 5.90625 -3.300781 5.90625 -2.5 C 5.90625 -1.707031 5.6875 -1.09375 5.25 -0.65625 C 4.8125 -0.21875 4.195312 0 3.40625 0 C 2.476562 0 1.796875 -0.316406 1.359375 -0.953125 C 0.929688 -1.597656 0.71875 -2.613281 0.71875 -4 C 0.71875 -5.300781 0.976562 -6.289062 1.5 -6.96875 C 2.019531 -7.65625 2.773438 -8 3.765625 -8 C 4.023438 -8 4.285156 -8 4.546875 -8 C 4.816406 -8 5.078125 -8 5.328125 -8 Z M 3.390625 -4 C 2.929688 -4 2.566406 -3.863281 2.296875 -3.59375 C 2.035156 -3.332031 1.90625 -2.96875 1.90625 -2.5 C 1.90625 -2.03125 2.035156 -1.660156 2.296875 -1.390625 C 2.566406 -1.128906 2.929688 -1 3.390625 -1 C 3.867188 -1 4.226562 -1.125 4.46875 -1.375 C 4.71875 -1.632812 4.84375 -2.007812 4.84375 -2.5 C 4.84375 -3 4.71875 -3.375 4.46875 -3.625 C 4.226562 -3.875 3.867188 -4 3.390625 -4 Z M 3.390625 -4 ",
+  7: "M 0.75 -8 L 5.796875 -8 L 5.796875 -7.546875 L 2.921875 0 L 1.796875 0 L 4.59375 -7 L 0.75 -7 Z M 0.75 -8 ",
+  8: "M 3.3125 -4 C 2.820312 -4 2.445312 -3.867188 2.1875 -3.609375 C 1.925781 -3.347656 1.796875 -2.976562 1.796875 -2.5 C 1.796875 -2.03125 1.925781 -1.660156 v2.1875 -1.390625 C 2.457031 -1.128906 2.832031 -1 3.3125 -1 C 3.800781 -1 4.175781 -1.128906 4.4375 -1.390625 C 4.695312 -1.648438 4.828125 -2.019531 4.828125 -2.5 C 4.828125 -2.976562 4.691406 -3.347656 4.421875 -3.609375 C 4.160156 -3.867188 3.789062 -4 3.3125 -4 Z M 2.359375 -4.53125 C 1.898438 -4.632812 1.539062 -4.828125 1.28125 -5.109375 C 1.019531 -5.398438 0.890625 -5.75 0.890625 -6.15625 C 0.890625 -6.71875 1.101562 -7.164062 1.53125 -7.5 C 1.96875 -7.832031 2.5625 -8 3.3125 -8 C 4.0625 -8 4.648438 -7.832031 5.078125 -7.5 C 5.515625 -7.164062 5.734375 -6.71875 5.734375 -6.15625 C 5.734375 -5.75 5.601562 -5.398438 5.34375 -5.109375 C 5.082031 -4.828125 4.722656 -4.632812 4.265625 -4.53125 C 4.796875 -4.40625 5.203125 -4.160156 5.484375 -3.796875 C 5.773438 -3.429688 5.921875 -2.957031 5.921875 -2.375 C 5.921875 -1.625 5.6875 -1.039062 5.21875 -0.625 C 4.757812 -0.207031 4.125 0 3.3125 0 C 2.488281 0 1.847656 -0.207031 1.390625 -0.625 C 0.929688 -1.039062 0.703125 -1.617188 0.703125 -2.359375 C 0.703125 -2.941406 0.84375 -3.414062 1.125 -3.78125 C 1.414062 -4.15625 1.828125 -4.40625 2.359375 -4.53125 Z M 1.96875 -5.984375 C 1.96875 -5.671875 2.082031 -5.425781 2.3125 -5.25 C 2.539062 -5.082031 2.875 -5 3.3125 -5 C 3.75 -5 4.082031 -5.082031 4.3125 -5.25 C 4.539062 -5.425781 4.65625 -5.671875 4.65625 -5.984375 C 4.65625 -6.316406 4.539062 -6.566406 4.3125 -6.734375 C 4.082031 -6.910156 3.75 -7 3.3125 -7 C 2.875 -7 2.539062 -6.910156 2.3125 -6.734375 C 2.082031 -6.566406 1.96875 -6.316406 1.96875 -5.984375 Z M 1.96875 -5.984375 ",
+  9: "M 3.203125 -4 C 3.660156 -4 4.019531 -4.128906 4.28125 -4.390625 C 4.550781 -4.660156 4.6875 -5.03125 4.6875 -5.5 C 4.6875 -5.96875 4.550781 -6.332031 4.28125 -6.59375 C 4.019531 -6.863281 3.660156 -7 3.203125 -7 C 2.722656 -7 2.359375 -6.867188 2.109375 -6.609375 C 1.867188 -6.359375 1.75 -5.988281 1.75 -5.5 C 1.75 -5 1.867188 -4.625 2.109375 -4.375 C 2.347656 -4.125 2.710938 -4 3.203125 -4 Z M 1.265625 0 L 1.265625 -1 C 1.492188 -1 1.734375 -1 1.984375 -1 C 2.242188 -1 2.507812 -1 2.78125 -1 C 3.46875 -1 3.988281 -1.269531 4.34375 -1.8125 C 4.695312 -2.351562 4.875 -3.148438 4.875 -4.203125 C 4.707031 -3.816406 4.46875 -3.519531 4.15625 -3.3125 C 3.851562 -3.101562 3.507812 -3 3.125 -3 C 2.34375 -3 1.738281 -3.21875 1.3125 -3.65625 C 0.894531 -4.09375 0.6875 -4.710938 0.6875 -5.515625 C 0.6875 -6.304688 0.898438 -6.914062 1.328125 -7.34375 C 1.765625 -7.78125 2.382812 -8 3.1875 -8 C 4.113281 -8 4.789062 -7.675781 5.21875 -7.03125 C 5.65625 -6.382812 5.875 -5.375 5.875 -4 C 5.875 -2.695312 5.613281 -1.703125 5.09375 -1.015625 C 4.570312 -0.335938 3.816406 0 2.828125 0 C 2.566406 0 2.300781 0 2.03125 0 C 1.769531 0 1.515625 0 1.265625 0 Z M 1.265625 0 ",
+  ".": "M 2.625 -2 L 3.984375 -2 L 3.984375 0 L 2.625 0 Z M 2.625 -2 ",
+};
+
+function inverse(obj) {
+  var retobj = {};
+  for (var key in obj) {
+    retobj[obj[key]] = key;
+  }
+  return retobj;
+}
+
+// GLOBALS for decomposition.
+var glyphdict = inverse(cmma);
+var glyphlookup = {};
+
+function getLetters(node) {
+  var letters = "";
+  var iter = node.getChildNodeIterator();
+  while (iter.hasNext()) {
+    var n = iter.next();
+    var name = n.getNodeName();
+    if (name === "use") {
+      var attr = n.getAttribute("xlink:href");
+      // gs.info('Node: ' + name + ' href: ' + attr);
+      if (attr.startsWith("#glyph")) {
+        var glyphId = attr.substring(1);
+        var glyph = glyphlookup[glyphId];
+        if (glyph && glyph in glyphdict) {
+          var letter = glyphdict[glyph];
+          letters += letter;
+        }
+      }
+    }
+  }
+
+  return letters;
+}
+
+
+function getGlyphLookup(node) {
+  if (!glyphlookup) glyphlookup = {};
+  var iter = node.getChildNodeIterator();
+  while (iter.hasNext()) {
+    var n = iter.next();
+    var name = n.getNodeName();
+    if (name === "symbol") {
+      var glyph = n.getAttribute("id");
+      // gs.info('FOUND Glyph: ' + glyph);
+      var iter2 = n.getChildNodeIterator();
+      while (iter2.hasNext()) {
+        var n2 = iter2.next();
+        var name = n2.getNodeName();
+        if (name === "path") {
+          var attr = n2.getAttribute("d");
+          if (glyph && attr) {
+            glyphlookup[glyph] = attr;
+          }
+        }
+      }
+    }
+  }
+
+  return glyphlookup;
+}
+
+
+// TEST -----------------------------------
+
+// Test 1 - get a number from the dictionary.
+var glyph =
+  "M 1.109375 -8 L 5.171875 -8 L 5.171875 -7 L 2.09375 -7 L 2.09375 -4.8125 C 2.25 -4.875 2.40625 -4.921875 2.5625 -4.953125 C 2.71875 -4.984375 2.875 -5 3.03125 -5 C 3.863281 -5 4.519531 -4.773438 5 -4.328125 C 5.488281 -3.878906 5.734375 -3.269531 5.734375 -2.5 C 5.734375 -1.726562 5.476562 -1.117188 4.96875 -0.671875 C 4.457031 -0.222656 3.757812 0 2.875 0 C 2.445312 0 2.054688 0 1.703125 0 C 1.359375 0 1.046875 0 0.765625 0 L 0.765625 -1 C 1.097656 -1 1.429688 -1 1.765625 -1 C 2.097656 -1 2.4375 -1 2.78125 -1 C 3.382812 -1 3.847656 -1.128906 4.171875 -1.390625 C 4.492188 -1.648438 4.65625 -2.019531 4.65625 -2.5 C 4.65625 -2.96875 4.488281 -3.332031 4.15625 -3.59375 C 3.820312 -3.863281 3.351562 -4 2.75 -4 C 2.457031 -4 2.171875 -4 1.890625 -4 C 1.617188 -4 1.359375 -4 1.109375 -4 Z M 1.109375 -8 ";
+var glyphh_number_5 = glyphdict[glyph];
+gs.info(glyphh_number_5.toString());
+
+// Test 2 - parse XML and create the glyphLookup dictionary.
+
+// // Test 3 - convert XML to JS Object. WARNING! Incorrect parsing! Do not use!
+// node = xmldoc.getNode("/svg/g");
+// var newObj = gs.xmlToJSON(node.toString());
+// gs.info(newObj);
+
+// Test 4 - Iterate over nodes.
+
+function test_getDevices(libre) {
+  return libre.getDevices();
+}
+
+if (testing) {
+  var libre = new LibreConnection();
+  var device_ids = ["136", "152", "161"]; // map to => ["Colombo.svg", "Jakarta.svg", "Singapore%201.svg"];
+
+  // Get devices and parse first one.
+  var devices = test_getDevices(libre);
+  for (var i in devices) {
+    var dId = devices[i]["device_id"];
+    // gs.info(dId);
+  }
+  var device = devices[0];
+  gs.addInfoMessage("First device: " + JSON.stringify(device));
+
+  // Test SVG Graph Parsing
+  for (var idx = 0; idx < device_ids.length; idx++) {
+    var device_id = device_ids[idx];
+    var name = sla_map[device_id];
+    gs.addInfoMessage("DEVICE: " + device_id + " " + name);
+
+    // Parse SVG latency.
+    var latency = libre.getDeviceLatency(device_id);
+    gs.addInfoMessage("LATENCY (ms)");
+    gs.addInfoMessage(JSON.stringify(latency));
+    // Parse SVG jitter.
+    var jitter = libre.getDeviceJitter(device_id);
+    gs.addInfoMessage("JITTER (ms)");
+    gs.addInfoMessage(JSON.stringify(jitter));
+    // Parse SVG jitter.
+    var loss = libre.getDeviceJitterLoss(device_id);
+    gs.addInfoMessage("JITTER LOSS (pkts)");
+    gs.addInfoMessage(JSON.stringify(loss));
+  }
+}
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-01 22:58:43</sys_created_on>
+        <sys_id>ab92ea53477a11105c2ec789826d43a0</sys_id>
+        <sys_name>LibreConnection</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_script_include_ab92ea53477a11105c2ec789826d43a0</sys_update_name>
+    </sys_script_include>
+</record_update>

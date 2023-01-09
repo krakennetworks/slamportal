@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="349e2f6b47b211105c2ec789826d4356" extends="sys_import_set_row" label="MCP SLA DS" max_length="40" name="x_620670_sla_mon_0_mcpsla_import" type="collection">
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Jitter" label="Jitter" max_length="40" name="u_jitter" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Latency" label="Latency" max_length="40" name="u_latency" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Packet Loss" label="Packet Loss" max_length="40" name="u_packet_loss" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Service ID" label="Service ID" max_length="40" name="u_service_id" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Status" label="Status" max_length="40" name="u_status" type="string"/>
+    </element>
+</database>

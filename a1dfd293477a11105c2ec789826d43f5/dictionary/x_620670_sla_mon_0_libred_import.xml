@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="1d3037eb47b211105c2ec789826d4397" extends="sys_import_set_row" label="Libre Device DS" max_length="40" name="x_620670_sla_mon_0_libred_import" type="collection">
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Device ID" label="Device ID" max_length="40" name="u_device_id" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Hardware" label="Hardware" max_length="40" name="u_hardware" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Hostname" label="Hostname" max_length="40" name="u_hostname" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=IP Address" label="IP Address" max_length="40" name="u_ip_address" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Location" label="Location" max_length="40" name="u_location" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Serial Number" label="Serial Number" max_length="40" name="u_serial_number" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=System Description" label="System Description" max_length="40" name="u_system_description" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=System Name" label="System Name" max_length="40" name="u_system_name" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Version" label="Version" max_length="40" name="u_version" type="string"/>
+    </element>
+</database>

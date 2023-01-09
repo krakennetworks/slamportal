@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="sla_type" table="x_620670_sla_mon_0_temp_libre_site_graphs" version="3">
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>sla_type</element>
+            <name>x_620670_sla_mon_0_temp_libre_site_graphs</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-21 20:18:40</sys_created_on>
+            <sys_name>sla_type</sys_name>
+            <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+            <sys_update_name>sys_choice_x_620670_sla_mon_0_temp_libre_site_graphs_sla_type</sys_update_name>
+        </sys_choice_set>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>sla_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Availability</label>
+            <language>en</language>
+            <name>x_620670_sla_mon_0_temp_libre_site_graphs</name>
+            <sequence/>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-21 20:19:17</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <value>availability</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>sla_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Jitter</label>
+            <language>en</language>
+            <name>x_620670_sla_mon_0_temp_libre_site_graphs</name>
+            <sequence/>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-21 20:18:53</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <value>jitter</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>sla_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Latency</label>
+            <language>en</language>
+            <name>x_620670_sla_mon_0_temp_libre_site_graphs</name>
+            <sequence/>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-21 20:18:39</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <value>latency</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>sla_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Packet Loss(Count)</label>
+            <language>en</language>
+            <name>x_620670_sla_mon_0_temp_libre_site_graphs</name>
+            <sequence/>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-21 20:19:05</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <value>packet_loss</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>sla_type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Round Trip Time</label>
+            <language>en</language>
+            <name>x_620670_sla_mon_0_temp_libre_site_graphs</name>
+            <sequence/>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2022-11-30 20:27:59</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <value>rtt</value>
+        </sys_choice>
+    </sys_choice>
+</record_update>

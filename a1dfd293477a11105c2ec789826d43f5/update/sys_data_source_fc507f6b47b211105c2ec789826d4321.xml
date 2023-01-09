@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_data_source">
+    <sys_data_source action="INSERT_OR_UPDATE">
+        <batch_size>1000</batch_size>
+        <category/>
+        <connection_override_last_success_time/>
+        <connection_timeout>0</connection_timeout>
+        <connection_url/>
+        <connection_url_parameters/>
+        <csv_delimiter/>
+        <data_in_single_column>false</data_in_single_column>
+        <data_loader><![CDATA[/*---------------------------------------------------------------------------------
+ *
+ *   Copyright © 2022 Kraken Networks, Inc. and AppVizo, LLC. All Rights Reserved.
+ *   File: C:\Projects\ServiceNow\Apps\SLAMonitor\InboundIntegrations\DataSources\LibreSlaDS.js
+ *   Version 0.0.1
+ *   Note: Original code from Sean and Bernie.
+ *
+ *----------------------------------------------------------------------------------*/
+
+
+(function loadData(import_set_table, data_source, import_log, last_success_import_time) {
+	//Set up Import Set Table
+	import_set_table.addColumn("Device Id");
+	import_set_table.addColumn("Jitter");
+	import_set_table.addColumn("Latency");
+	import_set_table.addColumn("Total Packets");
+	import_set_table.addColumn("Total Errors");
+	import_set_table.addColumn("Packet Ratio");
+	import_set_table.addColumn("Availability");
+	
+	//Import Data
+	var libre = new LibreConnection();
+	var devices = libre.getDevices();
+	for(var i in devices){
+		var device_id = devices[i]['device_id'];
+		var availability = libre.getDeviceAvailability(device_id);
+		var jitter = libre.getDeviceJitter(device_id);
+		var latency = libre.getDeviceLatency(device_id);
+		var dpr = libre.getDeviceDPR(device_id);
+		
+		var row = {
+			'Device Id': device_id,
+			'Jitter': jitter.src2dst_avg,
+			'Latency': latency.average,
+			'Total Packets': dpr['packets'],
+			'Total Errors': dpr['errors'],
+			'Packet Ratio': dpr['total_ratio'],
+			'Availability': availability
+		};
+		import_set_table.insert(row);
+	}
+
+})(import_set_table, data_source, import_log, last_success_import_time);]]></data_loader>
+        <database_name/>
+        <database_port/>
+        <discard_arrays>true</discard_arrays>
+        <expand_node_children>false</expand_node_children>
+        <file_path/>
+        <file_retrieval_method>Attachment</file_retrieval_method>
+        <format>CSV</format>
+        <glide_keystore>false</glide_keystore>
+        <header_row>0</header_row>
+        <import_set_table_label>LSLA Import</import_set_table_label>
+        <import_set_table_name>x_620670_sla_mon_0_lsla_import</import_set_table_name>
+        <instance_name/>
+        <jdbc_password/>
+        <jdbc_server/>
+        <jdbc_user_name/>
+        <jpath_root_node/>
+        <last_run_database_field/>
+        <last_run_datetime/>
+        <last_success_import_time/>
+        <ldap_target/>
+        <ldapprobe_result_set_rows>200</ldapprobe_result_set_rows>
+        <limit/>
+        <maximum_rows/>
+        <mid_server/>
+        <name>Libre SLA DS</name>
+        <offset>0</offset>
+        <oracle_port>1521</oracle_port>
+        <oracle_sid>orcl</oracle_sid>
+        <parsing_script><![CDATA[// The input value can be accessed through the variables named "line", "lineNumber" and "result"
+// The function uses result variable to return parse result back. 
+(function(line,lineNumber,result) {
+	// add code here
+})(line,lineNumber,result);]]></parsing_script>
+        <properties/>
+        <query>All Rows from Table</query>
+        <query_timeout>0</query_timeout>
+        <request_action/>
+        <scp_authentication>Username and Password</scp_authentication>
+        <scp_password/>
+        <scp_port/>
+        <scp_server/>
+        <scp_user_name/>
+        <sheet_number>0</sheet_number>
+        <sql_statement/>
+        <ssh_keyfile_path/>
+        <support_pagination>false</support_pagination>
+        <sys_class_name>sys_data_source</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-02 23:26:58</sys_created_on>
+        <sys_id>fc507f6b47b211105c2ec789826d4321</sys_id>
+        <sys_name>Libre SLA DS</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_data_source_fc507f6b47b211105c2ec789826d4321</sys_update_name>
+        <table_name/>
+        <type>CUSTOM</type>
+        <use_batch_import>false</use_batch_import>
+        <use_integrated_authentication>false</use_integrated_authentication>
+        <use_last_run_datetime>false</use_last_run_datetime>
+        <xpath_root_node/>
+        <zipped>false</zipped>
+    </sys_data_source>
+</record_update>
