@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="d2f3232347b211105c2ec789826d4392" extends="sys_import_set_row" label="MCP Services DS" max_length="40" name="x_620670_sla_mon_0_mcps_import" type="collection">
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Deployment State" label="Deployment State" max_length="40" name="u_deployment_state" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Directionality" label="Directionality" max_length="40" name="u_directionality" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Layer Rate" label="Layer Rate" max_length="40" name="u_layer_rate" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Network Role" label="Network Role" max_length="40" name="u_network_role" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Operational State" label="Operational State" max_length="40" name="u_operational_state" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Reliability" label="Reliability" max_length="40" name="u_reliability" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Resilience Level" label="Resilience Level" max_length="40" name="u_resilience_level" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Resource State" label="Resource State" max_length="40" name="u_resource_state" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Service Class" label="Service Class" max_length="40" name="u_service_class" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Service ID" label="Service ID" max_length="40" name="u_service_id" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Service Name" label="Service Name" max_length="40" name="u_service_name" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Service Type" label="Service Type" max_length="40" name="u_service_type" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Signal Content" label="Signal Content" max_length="40" name="u_signal_content" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Status" label="Status" max_length="40" name="u_status" type="string"/>
+        <element attributes="edge_encryption_enabled=true,import_attribute_name=Topology Sources" label="Topology Sources" max_length="40" name="u_topology_sources" type="string"/>
+    </element>
+</database>

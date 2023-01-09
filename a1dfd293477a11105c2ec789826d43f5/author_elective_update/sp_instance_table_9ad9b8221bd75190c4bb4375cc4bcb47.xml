@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance_table">
+    <sp_instance_table action="DELETE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <display_field>graph</display_field>
+        <field_list>graph</field_list>
+        <filter/>
+        <glyph/>
+        <id/>
+        <maximum_entries>5</maximum_entries>
+        <order>1</order>
+        <order_by/>
+        <order_direction>asc</order_direction>
+        <roles/>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="2">0626fafd1bdbd510c4bb4375cc4bcb8c</sp_column>
+        <sp_page/>
+        <sp_widget display_value="Table Reference">1dbb29f147001200ba13a5554ee49014</sp_widget>
+        <sys_class_name>sp_instance_table</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 03:55:50</sys_created_on>
+        <sys_id>9ad9b8221bd75190c4bb4375cc4bcb47</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_instance_table_9ad9b8221bd75190c4bb4375cc4bcb47</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-24 04:01:50</sys_updated_on>
+        <table>x_620670_sla_mon_0_temp_libre_site_graphs</table>
+        <title/>
+        <url/>
+        <widget_parameters/>
+    </sp_instance_table>
+    <sys_translated_text action="DELETE" query="documentkey=9ad9b8221bd75190c4bb4375cc4bcb47"/>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</application>
+        <file_path/>
+        <instance_id>5e89be73dbcb5dd40b9d21c40596198b</instance_id>
+        <instance_name>dev143754</instance_name>
+        <name>sp_instance_table_9ad9b8221bd75190c4bb4375cc4bcb47</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance_table"><sp_instance_table action="INSERT_OR_UPDATE"><active>true</active><class_name/><color>default</color><css/><display_field>graph</display_field><field_list>graph</field_list><filter/><glyph/><id/><maximum_entries>5</maximum_entries><order>1</order><order_by/><order_direction>asc</order_direction><roles/><short_description/><size>md</size><sp_column display_value="2">0626fafd1bdbd510c4bb4375cc4bcb8c</sp_column><sp_page/><sp_widget display_value="Table Reference">1dbb29f147001200ba13a5554ee49014</sp_widget><sys_class_name>sp_instance_table</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2022-11-24 03:55:50</sys_created_on><sys_id>9ad9b8221bd75190c4bb4375cc4bcb47</sys_id><sys_mod_count>2</sys_mod_count><sys_name/><sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package><sys_policy/><sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope><sys_update_name>sp_instance_table_9ad9b8221bd75190c4bb4375cc4bcb47</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2022-11-24 04:01:50</sys_updated_on><table>x_620670_sla_mon_0_temp_libre_site_graphs</table><title/><url/><widget_parameters/></sp_instance_table><sys_translated_text action="delete_multiple" query="documentkey=9ad9b8221bd75190c4bb4375cc4bcb47"/></record_update>]]></payload>
+        <payload_hash>-819207313</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>bc9f78401bdb1110c4bb4375cc4bcb04</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 04:01:50</sys_created_on>
+        <sys_id>5e3b70ee1bd75190c4bb4375cc4bcb20</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>184a7cc8b6a0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-24 04:01:50</sys_updated_on>
+        <type>Instance with Table</type>
+        <update_guid>563b70ee15d75190de4f0427bb848520</update_guid>
+        <update_guid_history>563b70ee15d75190de4f0427bb848520:-819207313,24ca7c6a9ad7519021bf6ded0b937829:229511597,2ad9b8220fd7519067d31045d06f0249:1861034166</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">509515ea1bd39190c4bb4375cc4bcbb5</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 05:56:57</sys_created_on>
+        <sys_db_object display_value="" name="sp_instance_table">sp_instance_table</sys_db_object>
+        <sys_id>6e0737af84b34614a9d8bfcf527eab49</sys_id>
+        <sys_metadata>9ad9b8221bd75190c4bb4375cc4bcb47</sys_metadata>
+        <sys_name/>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_scope_delete display_value="">3eb1dca27624471aa90d0e0f60a9ad79</sys_scope_delete>
+        <sys_update_name>sp_instance_table_9ad9b8221bd75190c4bb4375cc4bcb47</sys_update_name>
+        <sys_update_version display_value="sp_instance_table_9ad9b8221bd75190c4bb4375cc4bcb47">5e3b70ee1bd75190c4bb4375cc4bcb20</sys_update_version>
+    </sys_metadata_delete>
+</record_update>

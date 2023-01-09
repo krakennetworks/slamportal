@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller=function($scope, nowAttachmentHandler, snAttachmentHandler, spUtil) {
+	$scope.errorMessages = [];
+	$scope.vurls = [];
+	
+	$scope.attachmentHandler = new nowAttachmentHandler(getAttachments, function(error) {
+		$scope.errorMessages.push(error);
+		spUtil.addErrorMessage(error.msg + error.fileName);
+	});
+
+
+	function getAttachments() {
+		$scope.server.update().then(function() {
+			$scope.attachments = $scope.data.attachments;
+			for(var i in $scope.attachments){
+				var a = $scope.attachments[i];
+				var snah = snAttachmentHandler.getViewUrl(a.sys_id);
+				$scope.vurls.push(snah);
+			}
+			$scope.anyAttachments = $scope.attachments && $scope.attachments.length != 0;
+		});
+	}
+	getAttachments();
+};]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>libre_image_graph_view</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>Libre Image Graph View</name>
+        <option_schema/>
+        <public>true</public>
+        <roles>x_620670_sla_mon_0.client,x_620670_sla_mon_0.admin</roles>
+        <script><![CDATA[(function(){
+	var ATTACHMENT_LIMIT = 20;
+	var graph_table = 'x_620670_sla_mon_0_temp_libre_site_graphs';
+
+	data.attachments = [];
+	data.table = graph_table;
+	
+	var gsa = new GlideSysAttachment();
+	var gr = new GlideRecord(data.table);
+	gr.query();
+	
+	
+	while (gr.next() && data.attachments.length < ATTACHMENT_LIMIT) {
+		var grAttachment = gsa.getAttachments(graph_table, gr.sys_id);
+		
+		while (grAttachment.next() && data.attachments.length < ATTACHMENT_LIMIT) {
+				data.attachments.push(getAttachmentInfo(grAttachment));
+		}
+	}
+
+	function getAttachmentInfo(grAttachment) {
+		var attachment = {
+			"file_name": grAttachment.getValue('file_name'),
+			"table_name": grAttachment.getValue('table_name'),
+			"table_sys_id": grAttachment.getValue('table_sys_id'),
+			"sys_id": grAttachment.getUniqueValue(),
+			"sys_updated_on": grAttachment.getValue('sys_created_on'),
+			"state": grAttachment.getValue('state')
+		};
+			
+		return attachment;
+	}
+
+	
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-22 05:04:34</sys_created_on>
+        <sys_id>e9667ebd1bdbd510c4bb4375cc4bcbef</sys_id>
+        <sys_name>Libre Image Graph View</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_widget_e9667ebd1bdbd510c4bb4375cc4bcbef</sys_update_name>
+        <template><![CDATA[<section class='daily-graph-container'>
+  <div ng-repeat = "x in vurls" class = 'grid box'>
+    <img src="{{x}}"/>
+  </div>
+</section>]]></template>
+    </sp_widget>
+</record_update>

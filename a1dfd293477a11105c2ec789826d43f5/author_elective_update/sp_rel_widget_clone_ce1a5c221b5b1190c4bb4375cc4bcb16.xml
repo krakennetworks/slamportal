@@ -1,0 +1,1317 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone">
+    <sp_rel_widget_clone action="DELETE">
+        <child display_value="sc category knockoff">421a5c221b5b1190c4bb4375cc4bcb14</child>
+        <cloned>2022-11-24 01:37:07</cloned>
+        <last_validated>2022-11-24 01:37:07</last_validated>
+        <parent display_value="SC Category Page">f2ff0622d7000200a9ad1e173e24d4f3</parent>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;sp_widget&gt;&lt;category&gt;sc&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[function ($scope, spUtil, spScUtil, spAriaUtil, i18n, $rootScope, $location, $timeout, $window) {
+	loadPage();
+	
+	scrollCategoryPage();
+	
+	function scrollCategoryPage() {
+			$timeout(function() {
+					var animationDuration = 300;
+					if ($scope.options.isServiceWorkspace &amp;&amp; $window.innerWidth &lt; 992) { //Handling for smaller devices in workspace view.
+							var element = document.getElementById("sc_category_page");
+							if (element)
+									element.scrollIntoView();
+					} else if ($window.scrollY &gt; 0) { // Handling for smaller devices in portal view.
+							$('html').animate({
+									scrollTop: 0
+							}, animationDuration);
+					} else {
+							spUtil.scrollTo('#sc_category_page', animationDuration);
+					}
+			}, 0);
+	}
+	
+	function loadPage() {
+		$scope.hideItemWidget = !$scope.data.category_id;
+		if ($scope.data.category) {
+			if (!$scope.data.categories)
+				$scope.data.categories = [];
+			
+			$scope.data.categories.forEach(function(category, index, categories) {
+				categories[index].url = category.url + '&amp;catalog_id=' + $scope.data.catalog_id;
+			});
+			
+			if ($scope.data.sc_catalog)
+				$scope.data.categories.unshift({label: $scope.data.sc_catalog, url: '?id=' + $scope.data.sc_category_page + '&amp;catalog_id=' + $scope.data.catalog_id});
+			
+			if ($scope.data.show_popular_item) {
+				if ($scope.data.all_catalog_msg)
+					$scope.data.categories.unshift({label: $scope.data.all_catalog_msg, url: '?id=' + $scope.data.sc_category_page + '&amp;catalog_id=-1'});
+				else
+					$scope.data.categories.push({label: $scope.data.all_cat_msg, url: '#'});
+			} else {
+				if ($scope.data.all_catalog_msg)
+					$scope.data.categories.unshift({label: $scope.data.all_catalog_msg, url: '?id=' + $scope.data.sc_category_page + '&amp;catalog_id=-1'});
+
+				$scope.data.categories.push({label: $scope.data.category.title, url: '#'});
+			}
+			$timeout(function() {
+				$rootScope.$broadcast('sp.update.breadcrumbs', $scope.data.categories);
+			});
+			spUtil.setSearchPage('sc');
+			spAriaUtil.sendLiveMessage($scope.data.category.title + ' ' + $scope.data.categorySelected);
+			i18n.getMessage("Category page {0}", function (template) {
+				$scope.data.categoryPageAriaLabel = i18n.format(template, $scope.data.category.title);
+			});
+		}
+	}
+
+	function handleTooltip() {
+		if(!$scope.isTouchDevice()) {
+			$timeout(function() {
+				$(".item-card").each(function(index) {
+					var itemNameElement = $(this).find(".catalog-item-name");
+					if(itemNameElement &amp;&amp; itemNameElement[0] &amp;&amp; itemNameElement.width() &lt; itemNameElement[0].scrollWidth) {
+						$(this).attr('data-toggle','tooltip');
+					}
+				});
+			});
+		}
+	}
+	
+	$scope.showCategories =  function() {
+		$scope.hideItemWidget = true;
+		$rootScope.$broadcast("$sp.service_catelog.show.categories_widget");
+	}
+
+	$scope.switchTab = function($event) {
+		if ($event.which == 37 || $event.which == 39) {
+			$event.stopPropagation();
+			var layout = $scope.view === 'card' ? 'grid' : 'card';
+			$scope.changeView(layout);
+			$('#tab-' + layout).focus();
+		}
+	}
+	
+	var listenerForCatItems = $scope.$on("$sp.service_catelog.show.items_widget", function(event, payload) {
+		if (payload.setFocusOnAllCategsLink) {
+			$timeout(function() {
+				var allCategsLink = angular.element('#all-categories-link');
+				allCategsLink.focus();
+			}, 100);
+		}
+		$scope.hideItemWidget = false;
+	});
+	/*=============== Begin link handling ===============*/
+
+	$scope.changeView = function (view) {
+		spScUtil.setPreference('catalog-item-list-view', view)
+		$scope.view = view;
+	}
+
+	spScUtil.getPreference('catalog-item-list-view', function(value) {
+		$scope.view = value || 'card';
+	});
+
+	$scope.isTouchDevice = function(){
+		return ('ontouchstart' in $window);
+	}
+
+	$scope.loadMore = function (){
+		$scope.data.new_limit = $scope.data.limit + ($scope.options.limit_item || 9);
+		var itemDiffCounter = $scope.data.limit;
+		$scope.stopLoader =  false;
+		$scope.server.update().then(function () {
+			var old_limit = $scope.data.limit - ($scope.options.limit_item || 9);
+			if ($scope.data.limit &gt; $scope.data.items.length) {
+				itemDiffCounter = $scope.data.items.length - itemDiffCounter;
+			} else {
+				itemDiffCounter = $scope.data.limit - itemDiffCounter;
+			}
+			var fetchMessage;
+			i18n.getMessages(["Fetched", "additional items"], function(msgs) {
+				fetchMessage = msgs["Fetched"] + " " + itemDiffCounter + " " + msgs["additional items"];
+				spAriaUtil.sendLiveMessage(fetchMessage);
+			});
+			$scope.data.items[old_limit].highlight = true;
+			$scope.stopLoader =  true;
+		});
+	}
+
+	$scope.onClick = function($event, item) {
+		window.GlideWebAnalytics.trackEvent("Service Catalog", "Catalog Browse", "Item Clicked");
+		$event.preventDefault();
+		var lp = getLinkParts(item);
+		if (typeof lp == "string") {
+			$window.open(lp, '_blank');
+			return;
+		}
+		var evt = {item: item, search: lp};
+		// This will let a wrapper widget intercept and redirect somewhere else
+		$scope.$emit($scope.options.click_event_name, evt);
+	};
+
+	function getLinkParts(item) {
+		if (item.sys_class_name == 'sc_cat_item_content' &amp;&amp; item.content_type == 'external')
+			return item.url;
+
+		return {
+			id: item.page,
+			sys_id: item.content_type == 'kb' ? item.kb_article : item.sys_id,
+			sysparm_category: $scope.data.category_id,
+			referrer:  (item.content_type != 'kb' &amp;&amp; $scope.data.show_popular_item) ? 'popular_items' : null
+		};
+	}
+
+	$scope.getItemHREF = function(item) {
+		var lp = getLinkParts(item);
+		if (typeof lp == "string")
+			return lp;
+		return "?id=" + lp.id + "&amp;sys_id=" + lp.sys_id + "&amp;sysparm_category=" + $scope.data.category_id + ($scope.data.catalog_id ? "&amp;catalog_id=" + $scope.data.catalog_id : "") + (lp.referrer ? "&amp;referrer=" + lp.referrer : "");
+	}
+
+	var unregisterCategorySelected = $rootScope.$on('$sp.service_catalog.category.selected', function(evt, arg) {
+		$scope.data.category_id = arg.sys_id;
+		$scope.data.catalog_id = arg.catalog_id;
+		$scope.data.items = [];
+		$scope.showTopLoader = true;
+		$scope.data.startWindow = 0;
+				
+		scrollCategoryPage();
+		
+		$scope.server.update().then(function(result) {
+				if (arg.spa == 1)
+					$window.document.title = $scope.data.category.title + (!$scope.portal.hide_portal_name ? ' - ' + $scope.portal.title : '');
+				loadPage();
+				$scope.showTopLoader = false;
+		});
+	});
+
+	var unregister = $rootScope.$on($scope.options.click_event_name, function($event, o) {
+		if ("url" in o)
+			$location.href = o.url;
+		else
+			$location.search(o.search);
+	});
+
+	if ($scope.options.isServiceWorkspace) {
+			$window.postMessage({
+				msg:'CATALOG_ITEM_SET_TITLE',
+				title: i18n.getMessage('Catalogs')
+			}, $location.origin);
+	}
+
+	var mql;
+
+	if ($window.matchMedia) {
+		mql = $window.matchMedia('screen and (max-width: 768px)');
+    mql.addListener(handleMatchMedia);
+    handleMatchMedia(mql);
+	}
+
+	function handleMatchMedia(mql) {
+			if (!mql.matches) {
+        spScUtil.getPreference('catalog-item-list-view', function(value) {
+					$scope.view = value || 'card';
+					$scope.isMobile = false;
+				});
+			}
+			else {
+				$timeout(function() {
+					$scope.view = 'card';
+					$scope.isMobile = true;
+				})
+			}
+	}
+	$scope.$on("$destroy", function() {
+		unregister();
+		unregisterCategorySelected();
+		listenerForCatItems();
+		if (mql)
+			mql.removeListener(handleMatchMedia);
+	});
+
+	$scope.startItemList = function() {
+		$scope.stopLoader = true;
+		handleTooltip();
+	}
+
+	$scope.isTouchDevice = function() {
+		return ('ontouchstart' in $window);
+	}
+
+	/*=============== End link handling ===============*/
+}]]&gt;&lt;/client_script&gt;&lt;controller_as/&gt;&lt;css&gt;.toggle {
+  color: $gray-darker;
+  i:not(.active):hover {
+	  color: $list-group-link-heading-color;
+  }
+}
+
+.fa {
+  border: 4px solid transparent;
+}
+
+.fa.active {
+  color: $primary;
+  outline-style: solid;
+}
+
+.item-table {
+  table-layout: fixed;
+  background-color: #fff;
+   tr {
+     th {
+       padding: 16px 10px;
+     }
+     td {
+       padding: 16px 10px;
+       border: none;
+     }
+   }
+  a:focus {
+    outline: 0.5rem auto $brand-primary;
+    box-shadow: none;
+  }
+}
+
+.btn-loadmore {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.tab-card-padding {
+  padding: 2px;
+}
+
+@media (min-width: 768px) {
+  .item-card-column {
+    -ms-flex: 0 0 50%;
+    -moz-box-flex: 0 0 50%;
+    -moz-flex: 0 0 50%;
+    -webkit-box-flex: 0 0 50%;;
+    -webkit-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+    width: 50%;
+  }
+}
+
+  @media (min-width: 992px) {
+  .item-card-column {
+    -ms-flex: 0 0 33.33333%;
+    -moz-box-flex: 0 0 33.33333%;
+    -moz-flex: 0 0 33.33333%;
+    -webkit-box-flex: 0 0 33.33333%;;
+    -webkit-flex: 0 0 33.33333%;
+    flex: 0 0 33.33333%;
+    max-width: 33.33333%;
+    width: 33.33333%;
+  }
+}
+
+.sc-panel {
+  margin-bottom: 0px;
+  border-radius: 0;
+}
+
+.catalog-item-name {
+  text-decoration: underline;
+}&lt;/css&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;false&lt;/has_preview&gt;&lt;id&gt;sc-category&lt;/id&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link/&gt;&lt;name&gt;SC Category Page&lt;/name&gt;&lt;option_schema&gt;[{"name":"click_event_name","default_value":"$sp.cat_item_list.click","section":"other","label":"Click event name","type":"string"},{"hint":"Number of items to display per page","name":"limit_item","default_value":"15","section":"other","label":"Number of items per page","type":"integer"},{"hint":"Show items from child categories along with the items of the present category","name":"show_items_from_child","section":"other","default_value":"false","label":"Show items from Child Categories","type":"boolean"},{"hint":"Popular Items that has been used","name":"popular_items_created","section":"Data","default_value":"6","label":"Popular Items used in","type":"choice","choices":[{"label":"Last 3 months","value":"3"},{"label":"Last 6 months","value":"6"},{"label":"Last 12 months","value":"12"},{"label":"Life time (Has performance implications)","value":"0"}]}]&lt;/option_schema&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles&gt;snc_external,snc_internal&lt;/roles&gt;&lt;script&gt;&lt;![CDATA[(function() {
+	if (input &amp;&amp; input.category_id)
+		data.category_id = input.category_id;
+	else
+		data.category_id = $sp.getParameter("sys_id");
+	
+	data.error = '';
+	data.catalog_id = $sp.getParameter("catalog_id") ? $sp.getParameter("catalog_id") + "" : "-1";
+	var catalogsInPortal = ($sp.getCatalogs().value + "").split(",");
+	var isCatalogAccessibleViaPortal = data.catalog_id == -1 ? true : false;
+	catalogsInPortal.forEach(function(catalogSysId) {
+		if (data.catalog_id == catalogSysId) {
+			isCatalogAccessibleViaPortal = true;
+		}
+	});
+	data.categorySelected = gs.getMessage('category selected');
+	if(!isCatalogAccessibleViaPortal) {
+		data.error = gs.getMessage("You do not have permission to see this catalog");
+		return;
+	}
+	var catalogDisplayValue;
+	if (data.catalog_id &amp;&amp; data.catalog_id !== "-1") {
+		var catalogObj = new sn_sc.Catalog(data.catalog_id);
+		if (catalogObj) {
+			if (!catalogObj.canView()) {
+				data.error = gs.getMessage("You do not have permission to see this catalog");
+				return;
+			}
+			catalogDisplayValue = catalogObj.getTitle();
+		}
+	}
+	if (options &amp;&amp; options.sys_id)
+		data.category_id = options.sys_id;
+	data.showPrices = $sp.showCatalogPrices();
+	data.sc_catalog_page = $sp.getDisplayValue("sc_catalog_page") || "sc_home";
+	data.sc_category_page = $sp.getDisplayValue("sc_category_page") || "sc_category";
+	catalogDisplayValue = catalogDisplayValue ? catalogDisplayValue : $sp.getCatalogs().displayValue + "";
+	var catalogIDs = (data.catalog_id &amp;&amp; data.catalog_id !== "-1") ? data.catalog_id : $sp.getCatalogs().value + "";
+	var catalogArr = catalogDisplayValue.split(",");
+	var catalogIDArr = catalogIDs.split(",");
+	data.sc_catalog = catalogArr.length &gt; 1 ? "" : catalogArr[0];
+
+	data.show_more = false;
+	if (GlideStringUtil.nil(data.category_id)) {
+		 data.items = getPopularItems();
+		 data.show_popular_item = true;
+		 data.all_catalog_msg = (($sp.getCatalogs().value + "").split(",")).length &gt; 1 ? gs.getMessage("All Catalogs") : "";
+		 data.all_cat_msg = gs.getMessage("All Categories");
+		 data.category = {title: gs.getMessage("Popular Items"),
+									 description: ''};
+		return;
+	}
+
+	data.show_popular_item = false;
+	// Does user have permission to see this category?
+	var categoryId = '' + data.category_id;
+	var categoryJS = new sn_sc.CatCategory(categoryId);
+	if (!categoryJS.canView()) {
+		data.error = gs.getMessage("You do not have permission to see this category");
+		return;
+	}
+	data.category = {title: categoryJS.getTitle(),
+									 description: categoryJS.getDescription()};
+
+	var catalog = $sp.getCatalogs().value;
+
+	data.items = [];
+	var itemsInPage = options.limit_item || 9;
+
+	data.limit = itemsInPage;
+	if (input &amp;&amp; input.new_limit)
+		data.limit = input.new_limit;
+	if (input &amp;&amp; input.items) {
+		data.items = input.items.slice();//Copy the input array
+	}
+
+	if (input &amp;&amp; input.startWindow) {
+		data.endWindow = input.endWindow;
+	}
+	else {
+		data.startWindow = 0;
+		data.endWindow = 0;
+	}
+
+	while (data.items.length &lt; data.limit + 1) {
+		data.startWindow = data.endWindow;
+		data.endWindow = data.endWindow + itemsInPage;
+		var itemGR = queryItems(catalog, categoryId, data.startWindow, data.endWindow);
+		if (!itemGR.hasNext())
+			break;
+		fetchItemDetails(itemGR, data.items);
+	}
+
+	if (data.items.length &gt; data.limit)
+			data.show_more = true;
+
+	data.more_msg = gs.getMessage(" Showing {0} items", data.limit);
+
+	data.categories = [];
+	while(categoryJS &amp;&amp; categoryJS.getParent()) {
+		var parentId =  categoryJS.getParent();
+		categoryJS = new sn_sc.CatCategory(parentId);
+		var category = {
+			label: categoryJS.getTitle(),
+			url: '?id='+data.sc_category_page+'&amp;sys_id=' + parentId
+		};
+		data.categories.unshift(category);
+	}
+
+	data.all_catalog_msg = (($sp.getCatalogs().value + "").split(",")).length &gt; 1 ? gs.getMessage("All Catalogs") : "";
+
+	function fetchItemDetails(itemRecord, items) {
+		while (itemRecord.next()) {
+				var catalogItemJS = new sn_sc.CatItem(itemRecord.getUniqueValue());
+				if (!catalogItemJS.canView())
+					continue;
+
+				var catItemDetails = catalogItemJS.getItemSummary();
+				var item = {};
+				item.name = catItemDetails.name;
+				item.short_description = catItemDetails.short_description;
+				item.picture = catItemDetails.picture;
+				item.price = catItemDetails.price;
+				item.sys_id = catItemDetails.sys_id;
+				item.hasPrice = catItemDetails.show_price;
+				item.page = 'sc_cat_item';
+				item.type = catItemDetails.type;
+				item.order = catItemDetails.order;
+				item.sys_class_name = catItemDetails.sys_class_name;
+				item.titleTag = catItemDetails.name;
+				if (item.type == 'order_guide') {
+					item.page = 'sc_cat_item_guide';
+				} else if (item.type == 'content_item') {
+					item.content_type = catItemDetails.content_type;
+					item.url = catItemDetails.url;
+					if (item.content_type == 'kb') {
+						item.kb_article = catItemDetails.kb_article;
+						item.page = 'kb_article';
+					} else if (item.content_type == 'external') {
+						item.target = '_blank';
+						item.titleTag = catItemDetails.name + " ➚";
+					}
+				}
+				items.push(item);
+			}
+	}
+
+	function queryItems(catalog, categoryId, startWindow, endWindow) {
+			var scRecord = new sn_sc.CatalogSearch().search(catalog, categoryId, '', false, options.show_items_from_child != 'true');
+			scRecord.addQuery('sys_class_name', 'NOT IN', 'sc_cat_item_wizard');
+			scRecord.addEncodedQuery('hide_sp=false^ORhide_spISEMPTY^visible_standalone=true');
+			scRecord.chooseWindow(startWindow, endWindow);
+			scRecord.orderBy('order');
+			scRecord.orderBy('name');
+			scRecord.query();
+			return scRecord;
+	}
+
+	function getPopularItems() {
+        return new SCPopularItems().useOptimisedQuery(gs.getProperty('glide.sc.portal.popular_items.optimize', true) + '' == 'true')
+            .baseQuery(options.popular_items_created + '')
+            .allowedItems(getAllowedCatalogItems())
+            .visibleStandalone(true)
+            .visibleServicePortal(true)
+            .itemsLimit(6)
+            .restrictedItemTypes('sc_cat_item_guide,sc_cat_item_wizard,sc_cat_item_content,sc_cat_item_producer'.split(','))
+            .itemValidator(function(item, itemDetails) {
+                if (!item.canView() || !item.isVisibleServicePortal())
+                    return false;
+
+                return true;
+            })
+            .responseObjectFormatter(function(item, itemType, itemCount) {
+                return {
+                    order: 0 - itemCount,
+                    name: item.name,
+                    short_description: item.short_description,
+                    picture: item.picture,
+                    price: item.price,
+                    sys_id: item.sys_id,
+                    hasPrice: item.price != 0,
+                    page: itemType == 'sc_cat_item_guide' ? 'sc_cat_item_guide' : 'sc_cat_item'
+                };
+            })
+            .generate();
+    }
+
+	function getAllowedCatalogItems () {
+		var allowedItems = [];
+		catalogIDArr.forEach(function(catalogID) {
+			var catalogObj = new sn_sc.Catalog(catalogID);
+			var catItemIds = catalogObj.getCatalogItemIds();
+			for(var i=0; i&lt;catItemIds.length; i++) {
+				if (!allowedItems.includes(catItemIds[i]))
+					 allowedItems.push(catItemIds[i]);
+			}
+		});
+		return allowedItems;
+	}
+
+})();
+]]&gt;&lt;/script&gt;&lt;servicenow&gt;true&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-05-18 22:23:06&lt;/sys_created_on&gt;&lt;sys_id&gt;f2ff0622d7000200a9ad1e173e24d4f3&lt;/sys_id&gt;&lt;sys_mod_count&gt;490&lt;/sys_mod_count&gt;&lt;sys_name&gt;SC Category Page&lt;/sys_name&gt;&lt;sys_package display_value="Service Portal - Service Catalog (do not activate...see plugin description)" source="com.glide.service-portal.service-catalog"&gt;66369ee0f9c211108c8bd16244dfe781&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_f2ff0622d7000200a9ad1e173e24d4f3&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2022-05-19 10:11:12&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div id="sc_category_page"  class="m-t-sm " ng-class="{'hidden-xs' : hideItemWidget, 'm-l-sm': !isMobile}"&gt;
+  &lt;h4 ng-if="data.error"&gt;{{data.error}}&lt;/h4&gt;
+  &lt;div ng-init="spSearch.targetCatalog()"&gt;
+    &lt;div class="row"&gt;
+      &lt;div class="col-xs-9"&gt;
+        	&lt;button ng-click="showCategories()" class="visible-xs m-b-sm pointer btn-link" tabindex="0" id="all-categories-link"&gt;
+            &lt;i class="fa fa-chevron-left m-r-xs"&gt;&lt;/i&gt; ${All Categories}
+        	&lt;/button&gt;
+          &lt;h2 class="h4 m-t-none break-word" aria-label="{{data.categoryPageAriaLabel}}"&gt;{{data.category.title}}&lt;/h2&gt;
+        	&lt;p class="hidden-xs break-word"&gt;
+            {{data.category.description}}
+          &lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="col-xs-3" ng-if="!isMobile"&gt;
+        &lt;div role="tablist" class="pull-right padder-t-sm text-lg toggle" ng-show="!data.error &amp;&amp; data.items.length &gt; 0"&gt;
+          &lt;i id="tab-card" 
+             role="tab"
+             class="fa fa-th tab-card-padding" ng-click="changeView('card')" 
+             ng-keydown="switchTab($event)" aria-label="${Card View}" 
+             ng-class="{'active' : view == 'card'}"
+             title="${Card View}"
+             data-toggle="{{!isTouchDevice() ? 'tooltip' : undefined}}"
+ 	         data-placement="top"
+             data-container="body"
+             aria-selected="{{view == 'card'}}" 
+             aria-label="${Card View}"
+             ng-attr-aria-controls="{{view == 'card' ? 'tabpanel-card-' + (data.category_id ? data.category_id : '') : undefined}}" 
+             tabindex="{{view == 'card' ? '0' : '-1'}}"&gt;&lt;/i&gt;
+          &lt;span class="m-l-sm m-r-sm " aria-hidden="true"&gt; | &lt;/span&gt;
+          &lt;i id="tab-grid" 
+             role="tab"
+             class="fa fa-list-ul tab-card-padding" 
+             ng-click="changeView('grid')" 
+             ng-keydown="switchTab($event)" 
+             ng-class="{'active' : view == 'grid'}"
+             title="${Table View}"
+             data-toggle="{{!isTouchDevice() ? 'tooltip' : undefined}}"
+ 	           data-placement="top"
+             data-container="body"
+             aria-selected="{{view == 'grid'}}"
+             aria-label="${Table View}" 
+             ng-attr-aria-controls="{{view == 'grid' ? 'tabpanel-grid-' + (data.category_id ? data.category_id : '') : undefined}}" 
+             tabindex="{{view == 'grid' ? '0' : '-1'}}"&gt;&lt;/i&gt;
+        &lt;/div&gt;
+       &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+    	&lt;div class="text-a-c" ng-if="showTopLoader"&gt;
+      		&lt;i class="fa fa-spinner fa-pulse fa-3x fa-fw"&gt;&lt;/i&gt;
+			&lt;span class="sr-only"&gt;${Loading...}&lt;/span&gt;
+    	&lt;/div&gt;
+      &lt;div class="col-sm-6 col-md-4" ng-if="!showTopLoader &amp;&amp; !data.items.length &amp;&amp; !data.error"&gt;
+        ${No items in category}
+      &lt;/div&gt;
+      &lt;div id="tabpanel-grid-{{::data.category_id}}" role="tabpanel" aria-labelledby="{{'tab-grid'}}" ng-if="view == 'grid' &amp;&amp; data.items.length &gt; 0"&gt;
+        &lt;table class="table table-striped item-table" aria-label="{{::data.category.title}}" aria-describedby="id-caption-category"&gt;
+        	&lt;caption id="id-caption-category"&gt;&lt;span class="sr-only"&gt;{{::data.category.title}}&lt;/span&gt;&lt;/caption&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th id="id-header-item" scope="col" colspan="2"&gt;${Item}&lt;/th&gt;
+              &lt;th id="id-header-description" scope="col" colspan="3"&gt;${Description}&lt;/th&gt;
+            	  &lt;th id="id-header-price" scope="col" ng-if="data.showPrices"&gt;${Price}&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+          &lt;tbody&gt;
+            &lt;tr ng-repeat="item in data.items | orderBy: 'order' | limitTo: data.limit track by item.sys_id" ng-init="startItemList()"&gt;
+              &lt;td id="id-item-{{item.sys_id}}" headers="id-header-item" scope="row" colspan="2"&gt;
+                &lt;a target="{{::item.target}}" ng-href="{{::getItemHREF(item)}}" sn-focus="{{::item.highlight}}" ng-click="onClick($event, item)"&gt; 
+                	&lt;div&gt;
+                    &lt;img ng-src="{{::item.picture}}?t=small" ng-if="item.picture" alt="" class="m-r-sm m-b-sm item-image pull-left"/&gt;
+                    &lt;span class="catalog-text-wrap catalog-item-name"&gt;{{::item.name}}&lt;/span&gt;
+                    &lt;span ng-if="item.content_type == 'external'"&gt;&lt;span class="sr-only"&gt;${External Link}&lt;/span&gt; ➚&lt;/span&gt;
+                  &lt;/div&gt;
+                &lt;/a&gt;
+            	  &lt;/td&gt;
+            	  &lt;td headers="id-header-description id-item-{{item.sys_id}}" class="catalog-text-wrap" colspan="3"&gt;{{::item.short_description}}&lt;/td&gt;
+            	  &lt;td headers="id-header-price id-item-{{item.sys_id}}" ng-if="data.showPrices"&gt;{{::item.price}}&lt;/td&gt;
+            &lt;/tr&gt;
+          &lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/div&gt;
+      &lt;div id="tabpanel-card-{{::data.category_id}}" ng-if="view == 'card' &amp;&amp; data.items.length &gt; 0" role="tabpanel" aria-labelledby="{{'tab-card'}}"&gt;
+      	&lt;ul class="item-list-style-type-none item-card-row" role="list" aria-label="{{data.category.title}} ${items}"&gt;
+      		&lt;li class="item-card-column" ng-repeat="item in data.items | orderBy: 'order' | limitTo: data.limit track by item.sys_id" ng-init="startItemList()" role="listitem"&gt;
+            &lt;div class="panel panel-{{::options.color}} item-card b sc-panel"  data-original-title="{{::item.name}}"&gt;
+              &lt;a target="{{::item.target}}" ng-href="{{::getItemHREF(item)}}" ng-click="onClick($event, item)" class="panel-body block height-100" sn-focus="{{::item.highlight}}"&gt;
+                &lt;div&gt;
+                  &lt;h3 class="h4 m-t-none m-b-xs text-overflow-ellipsis catalog-item-name" title="{{::item.titleTag}}" style="padding-bottom:1px"&gt;{{::item.name}}&lt;span ng-if="item.content_type == 'external'"&gt;&lt;span class="sr-only"&gt;${External Link}&lt;/span&gt; ➚&lt;/span&gt;&lt;/h3&gt;
+                  &lt;img ng-src="{{::item.picture}}?t=small" ng-if="item.picture" alt="" class="m-r-sm m-b-sm item-image pull-left" aria-hidden="true"/&gt;
+                  &lt;div class="text-muted item-short-desc catalog-text-wrap"&gt;{{::item.short_description}}&lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class="panel-footer b"&gt;
+              &lt;a aria-label="${View Details} {{::item.name}}" ng-if="item.sys_class_name != 'sc_cat_item_content' || item.content_type == 'kb' || item.content_type == 'literal'" ng-click="onClick($event, item)" ng-href="{{getItemHREF(item)}}" class="pull-left text-muted"&gt;${View Details}&lt;/a&gt;
+              &lt;a aria-label="${View Details} {{::item.name}}" ng-if="item.sys_class_name == 'sc_cat_item_content' &amp;&amp; item.content_type == 'external'" ng-click="onClick($event, item)" ng-href="{{getItemHREF(item)}}" target="_blank" class="pull-left text-muted"&gt;${View Details}&lt;/a&gt;
+              &lt;span ng-if="data.showPrices &amp;&amp; item.hasPrice" class="pull-right item-price font-bold"&gt;{{::item.price}}&lt;/span&gt; &amp;nbsp;
+            &lt;/div&gt;
+      		&lt;/li&gt;
+      	&lt;/ul&gt;  
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="text-a-c" ng-if="!stopLoader &amp;&amp; data.items.length &gt; 0 &amp;&amp; !data.error"&gt;
+      &lt;i class="fa fa-spinner fa-pulse fa-3x fa-fw"&gt;&lt;/i&gt;
+			&lt;span class="sr-only"&gt;${Loading...}&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div ng-if="data.show_more &amp;&amp; !show_popular_item"&gt;
+      	&lt;div class="text-a-c"&gt;
+          {{data.more_msg}}
+      	&lt;/div&gt;
+        &lt;button class="m-t-xs btn btn-default btn-loadmore" ng-click="loadMore()"&gt;
+          ${Show More Items}
+        &lt;/button&gt;
+      &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;now-message key="Catalogs" value="${Catalogs}"/&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;</payload>
+        <sys_class_name>sp_rel_widget_clone</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 01:37:07</sys_created_on>
+        <sys_id>ce1a5c221b5b1190c4bb4375cc4bcb16</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>421a5c221b5b1190c4bb4375cc4bcb14</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_rel_widget_clone_ce1a5c221b5b1190c4bb4375cc4bcb16</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-24 01:37:07</sys_updated_on>
+    </sp_rel_widget_clone>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</application>
+        <file_path/>
+        <instance_id>5e89be73dbcb5dd40b9d21c40596198b</instance_id>
+        <instance_name>dev143754</instance_name>
+        <name>sp_rel_widget_clone_ce1a5c221b5b1190c4bb4375cc4bcb16</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone"><sp_rel_widget_clone action="INSERT_OR_UPDATE"><child display_value="sc category knockoff">421a5c221b5b1190c4bb4375cc4bcb14</child><cloned>2022-11-24 01:37:07</cloned><last_validated>2022-11-24 01:37:07</last_validated><parent display_value="SC Category Page">f2ff0622d7000200a9ad1e173e24d4f3</parent><payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;sp_widget&gt;&lt;category&gt;sc&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[function ($scope, spUtil, spScUtil, spAriaUtil, i18n, $rootScope, $location, $timeout, $window) {
+	loadPage();
+	
+	scrollCategoryPage();
+	
+	function scrollCategoryPage() {
+			$timeout(function() {
+					var animationDuration = 300;
+					if ($scope.options.isServiceWorkspace &amp;&amp; $window.innerWidth &lt; 992) { //Handling for smaller devices in workspace view.
+							var element = document.getElementById("sc_category_page");
+							if (element)
+									element.scrollIntoView();
+					} else if ($window.scrollY &gt; 0) { // Handling for smaller devices in portal view.
+							$('html').animate({
+									scrollTop: 0
+							}, animationDuration);
+					} else {
+							spUtil.scrollTo('#sc_category_page', animationDuration);
+					}
+			}, 0);
+	}
+	
+	function loadPage() {
+		$scope.hideItemWidget = !$scope.data.category_id;
+		if ($scope.data.category) {
+			if (!$scope.data.categories)
+				$scope.data.categories = [];
+			
+			$scope.data.categories.forEach(function(category, index, categories) {
+				categories[index].url = category.url + '&amp;catalog_id=' + $scope.data.catalog_id;
+			});
+			
+			if ($scope.data.sc_catalog)
+				$scope.data.categories.unshift({label: $scope.data.sc_catalog, url: '?id=' + $scope.data.sc_category_page + '&amp;catalog_id=' + $scope.data.catalog_id});
+			
+			if ($scope.data.show_popular_item) {
+				if ($scope.data.all_catalog_msg)
+					$scope.data.categories.unshift({label: $scope.data.all_catalog_msg, url: '?id=' + $scope.data.sc_category_page + '&amp;catalog_id=-1'});
+				else
+					$scope.data.categories.push({label: $scope.data.all_cat_msg, url: '#'});
+			} else {
+				if ($scope.data.all_catalog_msg)
+					$scope.data.categories.unshift({label: $scope.data.all_catalog_msg, url: '?id=' + $scope.data.sc_category_page + '&amp;catalog_id=-1'});
+
+				$scope.data.categories.push({label: $scope.data.category.title, url: '#'});
+			}
+			$timeout(function() {
+				$rootScope.$broadcast('sp.update.breadcrumbs', $scope.data.categories);
+			});
+			spUtil.setSearchPage('sc');
+			spAriaUtil.sendLiveMessage($scope.data.category.title + ' ' + $scope.data.categorySelected);
+			i18n.getMessage("Category page {0}", function (template) {
+				$scope.data.categoryPageAriaLabel = i18n.format(template, $scope.data.category.title);
+			});
+		}
+	}
+
+	function handleTooltip() {
+		if(!$scope.isTouchDevice()) {
+			$timeout(function() {
+				$(".item-card").each(function(index) {
+					var itemNameElement = $(this).find(".catalog-item-name");
+					if(itemNameElement &amp;&amp; itemNameElement[0] &amp;&amp; itemNameElement.width() &lt; itemNameElement[0].scrollWidth) {
+						$(this).attr('data-toggle','tooltip');
+					}
+				});
+			});
+		}
+	}
+	
+	$scope.showCategories =  function() {
+		$scope.hideItemWidget = true;
+		$rootScope.$broadcast("$sp.service_catelog.show.categories_widget");
+	}
+
+	$scope.switchTab = function($event) {
+		if ($event.which == 37 || $event.which == 39) {
+			$event.stopPropagation();
+			var layout = $scope.view === 'card' ? 'grid' : 'card';
+			$scope.changeView(layout);
+			$('#tab-' + layout).focus();
+		}
+	}
+	
+	var listenerForCatItems = $scope.$on("$sp.service_catelog.show.items_widget", function(event, payload) {
+		if (payload.setFocusOnAllCategsLink) {
+			$timeout(function() {
+				var allCategsLink = angular.element('#all-categories-link');
+				allCategsLink.focus();
+			}, 100);
+		}
+		$scope.hideItemWidget = false;
+	});
+	/*=============== Begin link handling ===============*/
+
+	$scope.changeView = function (view) {
+		spScUtil.setPreference('catalog-item-list-view', view)
+		$scope.view = view;
+	}
+
+	spScUtil.getPreference('catalog-item-list-view', function(value) {
+		$scope.view = value || 'card';
+	});
+
+	$scope.isTouchDevice = function(){
+		return ('ontouchstart' in $window);
+	}
+
+	$scope.loadMore = function (){
+		$scope.data.new_limit = $scope.data.limit + ($scope.options.limit_item || 9);
+		var itemDiffCounter = $scope.data.limit;
+		$scope.stopLoader =  false;
+		$scope.server.update().then(function () {
+			var old_limit = $scope.data.limit - ($scope.options.limit_item || 9);
+			if ($scope.data.limit &gt; $scope.data.items.length) {
+				itemDiffCounter = $scope.data.items.length - itemDiffCounter;
+			} else {
+				itemDiffCounter = $scope.data.limit - itemDiffCounter;
+			}
+			var fetchMessage;
+			i18n.getMessages(["Fetched", "additional items"], function(msgs) {
+				fetchMessage = msgs["Fetched"] + " " + itemDiffCounter + " " + msgs["additional items"];
+				spAriaUtil.sendLiveMessage(fetchMessage);
+			});
+			$scope.data.items[old_limit].highlight = true;
+			$scope.stopLoader =  true;
+		});
+	}
+
+	$scope.onClick = function($event, item) {
+		window.GlideWebAnalytics.trackEvent("Service Catalog", "Catalog Browse", "Item Clicked");
+		$event.preventDefault();
+		var lp = getLinkParts(item);
+		if (typeof lp == "string") {
+			$window.open(lp, '_blank');
+			return;
+		}
+		var evt = {item: item, search: lp};
+		// This will let a wrapper widget intercept and redirect somewhere else
+		$scope.$emit($scope.options.click_event_name, evt);
+	};
+
+	function getLinkParts(item) {
+		if (item.sys_class_name == 'sc_cat_item_content' &amp;&amp; item.content_type == 'external')
+			return item.url;
+
+		return {
+			id: item.page,
+			sys_id: item.content_type == 'kb' ? item.kb_article : item.sys_id,
+			sysparm_category: $scope.data.category_id,
+			referrer:  (item.content_type != 'kb' &amp;&amp; $scope.data.show_popular_item) ? 'popular_items' : null
+		};
+	}
+
+	$scope.getItemHREF = function(item) {
+		var lp = getLinkParts(item);
+		if (typeof lp == "string")
+			return lp;
+		return "?id=" + lp.id + "&amp;sys_id=" + lp.sys_id + "&amp;sysparm_category=" + $scope.data.category_id + ($scope.data.catalog_id ? "&amp;catalog_id=" + $scope.data.catalog_id : "") + (lp.referrer ? "&amp;referrer=" + lp.referrer : "");
+	}
+
+	var unregisterCategorySelected = $rootScope.$on('$sp.service_catalog.category.selected', function(evt, arg) {
+		$scope.data.category_id = arg.sys_id;
+		$scope.data.catalog_id = arg.catalog_id;
+		$scope.data.items = [];
+		$scope.showTopLoader = true;
+		$scope.data.startWindow = 0;
+				
+		scrollCategoryPage();
+		
+		$scope.server.update().then(function(result) {
+				if (arg.spa == 1)
+					$window.document.title = $scope.data.category.title + (!$scope.portal.hide_portal_name ? ' - ' + $scope.portal.title : '');
+				loadPage();
+				$scope.showTopLoader = false;
+		});
+	});
+
+	var unregister = $rootScope.$on($scope.options.click_event_name, function($event, o) {
+		if ("url" in o)
+			$location.href = o.url;
+		else
+			$location.search(o.search);
+	});
+
+	if ($scope.options.isServiceWorkspace) {
+			$window.postMessage({
+				msg:'CATALOG_ITEM_SET_TITLE',
+				title: i18n.getMessage('Catalogs')
+			}, $location.origin);
+	}
+
+	var mql;
+
+	if ($window.matchMedia) {
+		mql = $window.matchMedia('screen and (max-width: 768px)');
+    mql.addListener(handleMatchMedia);
+    handleMatchMedia(mql);
+	}
+
+	function handleMatchMedia(mql) {
+			if (!mql.matches) {
+        spScUtil.getPreference('catalog-item-list-view', function(value) {
+					$scope.view = value || 'card';
+					$scope.isMobile = false;
+				});
+			}
+			else {
+				$timeout(function() {
+					$scope.view = 'card';
+					$scope.isMobile = true;
+				})
+			}
+	}
+	$scope.$on("$destroy", function() {
+		unregister();
+		unregisterCategorySelected();
+		listenerForCatItems();
+		if (mql)
+			mql.removeListener(handleMatchMedia);
+	});
+
+	$scope.startItemList = function() {
+		$scope.stopLoader = true;
+		handleTooltip();
+	}
+
+	$scope.isTouchDevice = function() {
+		return ('ontouchstart' in $window);
+	}
+
+	/*=============== End link handling ===============*/
+}]]&gt;&lt;/client_script&gt;&lt;controller_as/&gt;&lt;css&gt;.toggle {
+  color: $gray-darker;
+  i:not(.active):hover {
+	  color: $list-group-link-heading-color;
+  }
+}
+
+.fa {
+  border: 4px solid transparent;
+}
+
+.fa.active {
+  color: $primary;
+  outline-style: solid;
+}
+
+.item-table {
+  table-layout: fixed;
+  background-color: #fff;
+   tr {
+     th {
+       padding: 16px 10px;
+     }
+     td {
+       padding: 16px 10px;
+       border: none;
+     }
+   }
+  a:focus {
+    outline: 0.5rem auto $brand-primary;
+    box-shadow: none;
+  }
+}
+
+.btn-loadmore {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.tab-card-padding {
+  padding: 2px;
+}
+
+@media (min-width: 768px) {
+  .item-card-column {
+    -ms-flex: 0 0 50%;
+    -moz-box-flex: 0 0 50%;
+    -moz-flex: 0 0 50%;
+    -webkit-box-flex: 0 0 50%;;
+    -webkit-flex: 0 0 50%;
+    flex: 0 0 50%;
+    max-width: 50%;
+    width: 50%;
+  }
+}
+
+  @media (min-width: 992px) {
+  .item-card-column {
+    -ms-flex: 0 0 33.33333%;
+    -moz-box-flex: 0 0 33.33333%;
+    -moz-flex: 0 0 33.33333%;
+    -webkit-box-flex: 0 0 33.33333%;;
+    -webkit-flex: 0 0 33.33333%;
+    flex: 0 0 33.33333%;
+    max-width: 33.33333%;
+    width: 33.33333%;
+  }
+}
+
+.sc-panel {
+  margin-bottom: 0px;
+  border-radius: 0;
+}
+
+.catalog-item-name {
+  text-decoration: underline;
+}&lt;/css&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;false&lt;/has_preview&gt;&lt;id&gt;sc-category&lt;/id&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link/&gt;&lt;name&gt;SC Category Page&lt;/name&gt;&lt;option_schema&gt;[{"name":"click_event_name","default_value":"$sp.cat_item_list.click","section":"other","label":"Click event name","type":"string"},{"hint":"Number of items to display per page","name":"limit_item","default_value":"15","section":"other","label":"Number of items per page","type":"integer"},{"hint":"Show items from child categories along with the items of the present category","name":"show_items_from_child","section":"other","default_value":"false","label":"Show items from Child Categories","type":"boolean"},{"hint":"Popular Items that has been used","name":"popular_items_created","section":"Data","default_value":"6","label":"Popular Items used in","type":"choice","choices":[{"label":"Last 3 months","value":"3"},{"label":"Last 6 months","value":"6"},{"label":"Last 12 months","value":"12"},{"label":"Life time (Has performance implications)","value":"0"}]}]&lt;/option_schema&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles&gt;snc_external,snc_internal&lt;/roles&gt;&lt;script&gt;&lt;![CDATA[(function() {
+	if (input &amp;&amp; input.category_id)
+		data.category_id = input.category_id;
+	else
+		data.category_id = $sp.getParameter("sys_id");
+	
+	data.error = '';
+	data.catalog_id = $sp.getParameter("catalog_id") ? $sp.getParameter("catalog_id") + "" : "-1";
+	var catalogsInPortal = ($sp.getCatalogs().value + "").split(",");
+	var isCatalogAccessibleViaPortal = data.catalog_id == -1 ? true : false;
+	catalogsInPortal.forEach(function(catalogSysId) {
+		if (data.catalog_id == catalogSysId) {
+			isCatalogAccessibleViaPortal = true;
+		}
+	});
+	data.categorySelected = gs.getMessage('category selected');
+	if(!isCatalogAccessibleViaPortal) {
+		data.error = gs.getMessage("You do not have permission to see this catalog");
+		return;
+	}
+	var catalogDisplayValue;
+	if (data.catalog_id &amp;&amp; data.catalog_id !== "-1") {
+		var catalogObj = new sn_sc.Catalog(data.catalog_id);
+		if (catalogObj) {
+			if (!catalogObj.canView()) {
+				data.error = gs.getMessage("You do not have permission to see this catalog");
+				return;
+			}
+			catalogDisplayValue = catalogObj.getTitle();
+		}
+	}
+	if (options &amp;&amp; options.sys_id)
+		data.category_id = options.sys_id;
+	data.showPrices = $sp.showCatalogPrices();
+	data.sc_catalog_page = $sp.getDisplayValue("sc_catalog_page") || "sc_home";
+	data.sc_category_page = $sp.getDisplayValue("sc_category_page") || "sc_category";
+	catalogDisplayValue = catalogDisplayValue ? catalogDisplayValue : $sp.getCatalogs().displayValue + "";
+	var catalogIDs = (data.catalog_id &amp;&amp; data.catalog_id !== "-1") ? data.catalog_id : $sp.getCatalogs().value + "";
+	var catalogArr = catalogDisplayValue.split(",");
+	var catalogIDArr = catalogIDs.split(",");
+	data.sc_catalog = catalogArr.length &gt; 1 ? "" : catalogArr[0];
+
+	data.show_more = false;
+	if (GlideStringUtil.nil(data.category_id)) {
+		 data.items = getPopularItems();
+		 data.show_popular_item = true;
+		 data.all_catalog_msg = (($sp.getCatalogs().value + "").split(",")).length &gt; 1 ? gs.getMessage("All Catalogs") : "";
+		 data.all_cat_msg = gs.getMessage("All Categories");
+		 data.category = {title: gs.getMessage("Popular Items"),
+									 description: ''};
+		return;
+	}
+
+	data.show_popular_item = false;
+	// Does user have permission to see this category?
+	var categoryId = '' + data.category_id;
+	var categoryJS = new sn_sc.CatCategory(categoryId);
+	if (!categoryJS.canView()) {
+		data.error = gs.getMessage("You do not have permission to see this category");
+		return;
+	}
+	data.category = {title: categoryJS.getTitle(),
+									 description: categoryJS.getDescription()};
+
+	var catalog = $sp.getCatalogs().value;
+
+	data.items = [];
+	var itemsInPage = options.limit_item || 9;
+
+	data.limit = itemsInPage;
+	if (input &amp;&amp; input.new_limit)
+		data.limit = input.new_limit;
+	if (input &amp;&amp; input.items) {
+		data.items = input.items.slice();//Copy the input array
+	}
+
+	if (input &amp;&amp; input.startWindow) {
+		data.endWindow = input.endWindow;
+	}
+	else {
+		data.startWindow = 0;
+		data.endWindow = 0;
+	}
+
+	while (data.items.length &lt; data.limit + 1) {
+		data.startWindow = data.endWindow;
+		data.endWindow = data.endWindow + itemsInPage;
+		var itemGR = queryItems(catalog, categoryId, data.startWindow, data.endWindow);
+		if (!itemGR.hasNext())
+			break;
+		fetchItemDetails(itemGR, data.items);
+	}
+
+	if (data.items.length &gt; data.limit)
+			data.show_more = true;
+
+	data.more_msg = gs.getMessage(" Showing {0} items", data.limit);
+
+	data.categories = [];
+	while(categoryJS &amp;&amp; categoryJS.getParent()) {
+		var parentId =  categoryJS.getParent();
+		categoryJS = new sn_sc.CatCategory(parentId);
+		var category = {
+			label: categoryJS.getTitle(),
+			url: '?id='+data.sc_category_page+'&amp;sys_id=' + parentId
+		};
+		data.categories.unshift(category);
+	}
+
+	data.all_catalog_msg = (($sp.getCatalogs().value + "").split(",")).length &gt; 1 ? gs.getMessage("All Catalogs") : "";
+
+	function fetchItemDetails(itemRecord, items) {
+		while (itemRecord.next()) {
+				var catalogItemJS = new sn_sc.CatItem(itemRecord.getUniqueValue());
+				if (!catalogItemJS.canView())
+					continue;
+
+				var catItemDetails = catalogItemJS.getItemSummary();
+				var item = {};
+				item.name = catItemDetails.name;
+				item.short_description = catItemDetails.short_description;
+				item.picture = catItemDetails.picture;
+				item.price = catItemDetails.price;
+				item.sys_id = catItemDetails.sys_id;
+				item.hasPrice = catItemDetails.show_price;
+				item.page = 'sc_cat_item';
+				item.type = catItemDetails.type;
+				item.order = catItemDetails.order;
+				item.sys_class_name = catItemDetails.sys_class_name;
+				item.titleTag = catItemDetails.name;
+				if (item.type == 'order_guide') {
+					item.page = 'sc_cat_item_guide';
+				} else if (item.type == 'content_item') {
+					item.content_type = catItemDetails.content_type;
+					item.url = catItemDetails.url;
+					if (item.content_type == 'kb') {
+						item.kb_article = catItemDetails.kb_article;
+						item.page = 'kb_article';
+					} else if (item.content_type == 'external') {
+						item.target = '_blank';
+						item.titleTag = catItemDetails.name + " ➚";
+					}
+				}
+				items.push(item);
+			}
+	}
+
+	function queryItems(catalog, categoryId, startWindow, endWindow) {
+			var scRecord = new sn_sc.CatalogSearch().search(catalog, categoryId, '', false, options.show_items_from_child != 'true');
+			scRecord.addQuery('sys_class_name', 'NOT IN', 'sc_cat_item_wizard');
+			scRecord.addEncodedQuery('hide_sp=false^ORhide_spISEMPTY^visible_standalone=true');
+			scRecord.chooseWindow(startWindow, endWindow);
+			scRecord.orderBy('order');
+			scRecord.orderBy('name');
+			scRecord.query();
+			return scRecord;
+	}
+
+	function getPopularItems() {
+        return new SCPopularItems().useOptimisedQuery(gs.getProperty('glide.sc.portal.popular_items.optimize', true) + '' == 'true')
+            .baseQuery(options.popular_items_created + '')
+            .allowedItems(getAllowedCatalogItems())
+            .visibleStandalone(true)
+            .visibleServicePortal(true)
+            .itemsLimit(6)
+            .restrictedItemTypes('sc_cat_item_guide,sc_cat_item_wizard,sc_cat_item_content,sc_cat_item_producer'.split(','))
+            .itemValidator(function(item, itemDetails) {
+                if (!item.canView() || !item.isVisibleServicePortal())
+                    return false;
+
+                return true;
+            })
+            .responseObjectFormatter(function(item, itemType, itemCount) {
+                return {
+                    order: 0 - itemCount,
+                    name: item.name,
+                    short_description: item.short_description,
+                    picture: item.picture,
+                    price: item.price,
+                    sys_id: item.sys_id,
+                    hasPrice: item.price != 0,
+                    page: itemType == 'sc_cat_item_guide' ? 'sc_cat_item_guide' : 'sc_cat_item'
+                };
+            })
+            .generate();
+    }
+
+	function getAllowedCatalogItems () {
+		var allowedItems = [];
+		catalogIDArr.forEach(function(catalogID) {
+			var catalogObj = new sn_sc.Catalog(catalogID);
+			var catItemIds = catalogObj.getCatalogItemIds();
+			for(var i=0; i&lt;catItemIds.length; i++) {
+				if (!allowedItems.includes(catItemIds[i]))
+					 allowedItems.push(catItemIds[i]);
+			}
+		});
+		return allowedItems;
+	}
+
+})();
+]]&gt;&lt;/script&gt;&lt;servicenow&gt;true&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-05-18 22:23:06&lt;/sys_created_on&gt;&lt;sys_id&gt;f2ff0622d7000200a9ad1e173e24d4f3&lt;/sys_id&gt;&lt;sys_mod_count&gt;490&lt;/sys_mod_count&gt;&lt;sys_name&gt;SC Category Page&lt;/sys_name&gt;&lt;sys_package display_value="Service Portal - Service Catalog (do not activate...see plugin description)" source="com.glide.service-portal.service-catalog"&gt;66369ee0f9c211108c8bd16244dfe781&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_f2ff0622d7000200a9ad1e173e24d4f3&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2022-05-19 10:11:12&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div id="sc_category_page"  class="m-t-sm " ng-class="{'hidden-xs' : hideItemWidget, 'm-l-sm': !isMobile}"&gt;
+  &lt;h4 ng-if="data.error"&gt;{{data.error}}&lt;/h4&gt;
+  &lt;div ng-init="spSearch.targetCatalog()"&gt;
+    &lt;div class="row"&gt;
+      &lt;div class="col-xs-9"&gt;
+        	&lt;button ng-click="showCategories()" class="visible-xs m-b-sm pointer btn-link" tabindex="0" id="all-categories-link"&gt;
+            &lt;i class="fa fa-chevron-left m-r-xs"&gt;&lt;/i&gt; ${All Categories}
+        	&lt;/button&gt;
+          &lt;h2 class="h4 m-t-none break-word" aria-label="{{data.categoryPageAriaLabel}}"&gt;{{data.category.title}}&lt;/h2&gt;
+        	&lt;p class="hidden-xs break-word"&gt;
+            {{data.category.description}}
+          &lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="col-xs-3" ng-if="!isMobile"&gt;
+        &lt;div role="tablist" class="pull-right padder-t-sm text-lg toggle" ng-show="!data.error &amp;&amp; data.items.length &gt; 0"&gt;
+          &lt;i id="tab-card" 
+             role="tab"
+             class="fa fa-th tab-card-padding" ng-click="changeView('card')" 
+             ng-keydown="switchTab($event)" aria-label="${Card View}" 
+             ng-class="{'active' : view == 'card'}"
+             title="${Card View}"
+             data-toggle="{{!isTouchDevice() ? 'tooltip' : undefined}}"
+ 	         data-placement="top"
+             data-container="body"
+             aria-selected="{{view == 'card'}}" 
+             aria-label="${Card View}"
+             ng-attr-aria-controls="{{view == 'card' ? 'tabpanel-card-' + (data.category_id ? data.category_id : '') : undefined}}" 
+             tabindex="{{view == 'card' ? '0' : '-1'}}"&gt;&lt;/i&gt;
+          &lt;span class="m-l-sm m-r-sm " aria-hidden="true"&gt; | &lt;/span&gt;
+          &lt;i id="tab-grid" 
+             role="tab"
+             class="fa fa-list-ul tab-card-padding" 
+             ng-click="changeView('grid')" 
+             ng-keydown="switchTab($event)" 
+             ng-class="{'active' : view == 'grid'}"
+             title="${Table View}"
+             data-toggle="{{!isTouchDevice() ? 'tooltip' : undefined}}"
+ 	           data-placement="top"
+             data-container="body"
+             aria-selected="{{view == 'grid'}}"
+             aria-label="${Table View}" 
+             ng-attr-aria-controls="{{view == 'grid' ? 'tabpanel-grid-' + (data.category_id ? data.category_id : '') : undefined}}" 
+             tabindex="{{view == 'grid' ? '0' : '-1'}}"&gt;&lt;/i&gt;
+        &lt;/div&gt;
+       &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="row"&gt;
+    	&lt;div class="text-a-c" ng-if="showTopLoader"&gt;
+      		&lt;i class="fa fa-spinner fa-pulse fa-3x fa-fw"&gt;&lt;/i&gt;
+			&lt;span class="sr-only"&gt;${Loading...}&lt;/span&gt;
+    	&lt;/div&gt;
+      &lt;div class="col-sm-6 col-md-4" ng-if="!showTopLoader &amp;&amp; !data.items.length &amp;&amp; !data.error"&gt;
+        ${No items in category}
+      &lt;/div&gt;
+      &lt;div id="tabpanel-grid-{{::data.category_id}}" role="tabpanel" aria-labelledby="{{'tab-grid'}}" ng-if="view == 'grid' &amp;&amp; data.items.length &gt; 0"&gt;
+        &lt;table class="table table-striped item-table" aria-label="{{::data.category.title}}" aria-describedby="id-caption-category"&gt;
+        	&lt;caption id="id-caption-category"&gt;&lt;span class="sr-only"&gt;{{::data.category.title}}&lt;/span&gt;&lt;/caption&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th id="id-header-item" scope="col" colspan="2"&gt;${Item}&lt;/th&gt;
+              &lt;th id="id-header-description" scope="col" colspan="3"&gt;${Description}&lt;/th&gt;
+            	  &lt;th id="id-header-price" scope="col" ng-if="data.showPrices"&gt;${Price}&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+          &lt;tbody&gt;
+            &lt;tr ng-repeat="item in data.items | orderBy: 'order' | limitTo: data.limit track by item.sys_id" ng-init="startItemList()"&gt;
+              &lt;td id="id-item-{{item.sys_id}}" headers="id-header-item" scope="row" colspan="2"&gt;
+                &lt;a target="{{::item.target}}" ng-href="{{::getItemHREF(item)}}" sn-focus="{{::item.highlight}}" ng-click="onClick($event, item)"&gt; 
+                	&lt;div&gt;
+                    &lt;img ng-src="{{::item.picture}}?t=small" ng-if="item.picture" alt="" class="m-r-sm m-b-sm item-image pull-left"/&gt;
+                    &lt;span class="catalog-text-wrap catalog-item-name"&gt;{{::item.name}}&lt;/span&gt;
+                    &lt;span ng-if="item.content_type == 'external'"&gt;&lt;span class="sr-only"&gt;${External Link}&lt;/span&gt; ➚&lt;/span&gt;
+                  &lt;/div&gt;
+                &lt;/a&gt;
+            	  &lt;/td&gt;
+            	  &lt;td headers="id-header-description id-item-{{item.sys_id}}" class="catalog-text-wrap" colspan="3"&gt;{{::item.short_description}}&lt;/td&gt;
+            	  &lt;td headers="id-header-price id-item-{{item.sys_id}}" ng-if="data.showPrices"&gt;{{::item.price}}&lt;/td&gt;
+            &lt;/tr&gt;
+          &lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/div&gt;
+      &lt;div id="tabpanel-card-{{::data.category_id}}" ng-if="view == 'card' &amp;&amp; data.items.length &gt; 0" role="tabpanel" aria-labelledby="{{'tab-card'}}"&gt;
+      	&lt;ul class="item-list-style-type-none item-card-row" role="list" aria-label="{{data.category.title}} ${items}"&gt;
+      		&lt;li class="item-card-column" ng-repeat="item in data.items | orderBy: 'order' | limitTo: data.limit track by item.sys_id" ng-init="startItemList()" role="listitem"&gt;
+            &lt;div class="panel panel-{{::options.color}} item-card b sc-panel"  data-original-title="{{::item.name}}"&gt;
+              &lt;a target="{{::item.target}}" ng-href="{{::getItemHREF(item)}}" ng-click="onClick($event, item)" class="panel-body block height-100" sn-focus="{{::item.highlight}}"&gt;
+                &lt;div&gt;
+                  &lt;h3 class="h4 m-t-none m-b-xs text-overflow-ellipsis catalog-item-name" title="{{::item.titleTag}}" style="padding-bottom:1px"&gt;{{::item.name}}&lt;span ng-if="item.content_type == 'external'"&gt;&lt;span class="sr-only"&gt;${External Link}&lt;/span&gt; ➚&lt;/span&gt;&lt;/h3&gt;
+                  &lt;img ng-src="{{::item.picture}}?t=small" ng-if="item.picture" alt="" class="m-r-sm m-b-sm item-image pull-left" aria-hidden="true"/&gt;
+                  &lt;div class="text-muted item-short-desc catalog-text-wrap"&gt;{{::item.short_description}}&lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class="panel-footer b"&gt;
+              &lt;a aria-label="${View Details} {{::item.name}}" ng-if="item.sys_class_name != 'sc_cat_item_content' || item.content_type == 'kb' || item.content_type == 'literal'" ng-click="onClick($event, item)" ng-href="{{getItemHREF(item)}}" class="pull-left text-muted"&gt;${View Details}&lt;/a&gt;
+              &lt;a aria-label="${View Details} {{::item.name}}" ng-if="item.sys_class_name == 'sc_cat_item_content' &amp;&amp; item.content_type == 'external'" ng-click="onClick($event, item)" ng-href="{{getItemHREF(item)}}" target="_blank" class="pull-left text-muted"&gt;${View Details}&lt;/a&gt;
+              &lt;span ng-if="data.showPrices &amp;&amp; item.hasPrice" class="pull-right item-price font-bold"&gt;{{::item.price}}&lt;/span&gt; &amp;nbsp;
+            &lt;/div&gt;
+      		&lt;/li&gt;
+      	&lt;/ul&gt;  
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="text-a-c" ng-if="!stopLoader &amp;&amp; data.items.length &gt; 0 &amp;&amp; !data.error"&gt;
+      &lt;i class="fa fa-spinner fa-pulse fa-3x fa-fw"&gt;&lt;/i&gt;
+			&lt;span class="sr-only"&gt;${Loading...}&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div ng-if="data.show_more &amp;&amp; !show_popular_item"&gt;
+      	&lt;div class="text-a-c"&gt;
+          {{data.more_msg}}
+      	&lt;/div&gt;
+        &lt;button class="m-t-xs btn btn-default btn-loadmore" ng-click="loadMore()"&gt;
+          ${Show More Items}
+        &lt;/button&gt;
+      &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;now-message key="Catalogs" value="${Catalogs}"/&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;</payload><sys_class_name>sp_rel_widget_clone</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2022-11-24 01:37:07</sys_created_on><sys_id>ce1a5c221b5b1190c4bb4375cc4bcb16</sys_id><sys_mod_count>0</sys_mod_count><sys_name>421a5c221b5b1190c4bb4375cc4bcb14</sys_name><sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package><sys_policy/><sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope><sys_update_name>sp_rel_widget_clone_ce1a5c221b5b1190c4bb4375cc4bcb16</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2022-11-24 01:37:07</sys_updated_on></sp_rel_widget_clone></record_update>]]></payload>
+        <payload_hash>-232742486</payload_hash>
+        <record_name>421a5c221b5b1190c4bb4375cc4bcb14</record_name>
+        <reverted_from/>
+        <source>bc9f78401bdb1110c4bb4375cc4bcb04</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 01:37:07</sys_created_on>
+        <sys_id>961a5c221b5b1190c4bb4375cc4bcb19</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>184a7480b580000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-11-24 01:37:07</sys_updated_on>
+        <type>Widget Clone</type>
+        <update_guid>de1a5c22175b1190cabcd72233181d18</update_guid>
+        <update_guid_history>de1a5c22175b1190cabcd72233181d18:-232742486</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">2ac2812e1bdb5190c4bb4375cc4bcb49</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 04:34:55</sys_created_on>
+        <sys_db_object display_value="" name="sp_rel_widget_clone">sp_rel_widget_clone</sys_db_object>
+        <sys_id>02dae2404d2948418176536e3315ec01</sys_id>
+        <sys_metadata>ce1a5c221b5b1190c4bb4375cc4bcb16</sys_metadata>
+        <sys_name>421a5c221b5b1190c4bb4375cc4bcb14</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_scope_delete display_value="">3eb1dca27624471aa90d0e0f60a9ad79</sys_scope_delete>
+        <sys_update_name>sp_rel_widget_clone_ce1a5c221b5b1190c4bb4375cc4bcb16</sys_update_name>
+        <sys_update_version display_value="sp_rel_widget_clone_ce1a5c221b5b1190c4bb4375cc4bcb16">961a5c221b5b1190c4bb4375cc4bcb19</sys_update_version>
+    </sys_metadata_delete>
+</record_update>

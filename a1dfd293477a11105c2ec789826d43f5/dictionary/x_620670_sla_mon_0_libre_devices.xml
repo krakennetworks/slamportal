@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="ba1e976b477211105c2ec789826d43c5" label="Libre Devices" max_length="40" name="x_620670_sla_mon_0_libre_devices" type="collection">
+        <element label="Device Id" max_length="40" name="device_id" type="integer"/>
+        <element label="Hardware" max_length="40" name="hardware" type="string"/>
+        <element label="Hostname" max_length="40" name="hostname" type="string"/>
+        <element label="IP Address" max_length="40" name="ip_address" type="string"/>
+        <element label="Location" max_length="40" name="location" type="string"/>
+        <element label="Serial Number" max_length="40" name="serial_number" type="string"/>
+        <element display="true" label="System Description" max_length="40" name="system_description" type="string"/>
+        <element label="System Name" max_length="40" name="system_name" type="string"/>
+        <element label="Version" max_length="40" name="version" type="string"/>
+    </element>
+</database>
