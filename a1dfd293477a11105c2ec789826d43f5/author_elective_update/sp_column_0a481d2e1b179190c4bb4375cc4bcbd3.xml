@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_column">
+    <sp_column action="DELETE">
+        <class_name/>
+        <order>1</order>
+        <size>12</size>
+        <size_lg/>
+        <size_sm/>
+        <size_xs/>
+        <sp_row display_value="1">0a481d2e1b179190c4bb4375cc4bcbd1</sp_row>
+        <sys_class_name>sp_column</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 06:08:48</sys_created_on>
+        <sys_id>0a481d2e1b179190c4bb4375cc4bcbd3</sys_id>
+        <sys_name>1</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_column_0a481d2e1b179190c4bb4375cc4bcbd3</sys_update_name>
+    </sp_column>
+<sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</application>
+        <file_path/>
+        <instance_id>3be6572ddb617fc0b847ac44d4961982</instance_id>
+        <instance_name>dev85975</instance_name>
+        <name>sp_column_0a481d2e1b179190c4bb4375cc4bcbd3</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_column">
+    <sp_column action="INSERT_OR_UPDATE">
+        <class_name/>
+        <order>1</order>
+        <size>12</size>
+        <size_lg/>
+        <size_sm/>
+        <size_xs/>
+        <sp_row display_value="1">0a481d2e1b179190c4bb4375cc4bcbd1</sp_row>
+        <sys_class_name>sp_column</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 06:08:48</sys_created_on>
+        <sys_id>0a481d2e1b179190c4bb4375cc4bcbd3</sys_id>
+        <sys_name>1</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_column_0a481d2e1b179190c4bb4375cc4bcbd3</sys_update_name>
+    </sp_column>
+</record_update>]]></payload>
+        <payload_hash>884766892</payload_hash>
+        <record_name>1</record_name>
+        <reverted_from/>
+        <source>d1f1716d2fd421101ed43f96f699b655</source>
+        <source_table>sys_upgrade_history</source_table>
+        <state>previous</state>
+        <sys_created_by>sean.mauk</sys_created_by>
+        <sys_created_on>2023-01-09 22:30:34</sys_created_on>
+        <sys_id>c4227d6d2fd421101ed43f96f699b613</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>18598a826130000001</sys_recorded_at>
+        <sys_updated_by>sean.mauk</sys_updated_by>
+        <sys_updated_on>2023-01-09 22:30:34</sys_updated_on>
+        <type>Column</type>
+        <update_guid>84227d6db4d42110c9e5746c74677313</update_guid>
+        <update_guid_history>84227d6db4d42110c9e5746c74677313:884766892</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="1">7a64052a2f1021101ed43f96f699b6e9</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>bcharles</sys_created_by>
+        <sys_created_on>2023-01-12 21:44:48</sys_created_on>
+        <sys_db_object display_value="" name="sp_column">sp_column</sys_db_object>
+        <sys_id>0dfa4a770770467480d971e3a1c878e4</sys_id>
+        <sys_metadata>0a481d2e1b179190c4bb4375cc4bcbd3</sys_metadata>
+        <sys_name>1</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_scope_delete display_value="">3eb1dca27624471aa90d0e0f60a9ad79</sys_scope_delete>
+        <sys_update_name>sp_column_0a481d2e1b179190c4bb4375cc4bcbd3</sys_update_name>
+        <sys_update_version display_value="sp_column_0a481d2e1b179190c4bb4375cc4bcbd3">c4227d6d2fd421101ed43f96f699b613</sys_update_version>
+    </sys_metadata_delete>
+</record_update>
