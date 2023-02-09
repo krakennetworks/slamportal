@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="efe1675e2fb461101ed43f96f699b6b2" max_length="40" name="x_620670_sla_mon_0_latency" type="collection">
+        <element display="true" label="Timestamp" max_length="40" name="timestamp" type="glide_date_time"/>
+    </element>
+</database>

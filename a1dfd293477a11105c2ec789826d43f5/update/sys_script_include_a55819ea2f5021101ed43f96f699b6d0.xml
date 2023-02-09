@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_620670_sla_mon_0.jsipslagather</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>This is the javascript version of ipslagather being ported from our python backend.</description>
+        <name>jsipslagather</name>
+        <script><![CDATA[var jsipslagather = Class.create();
+jsipslagather.prototype = {
+    initialize: function() {
+    },
+
+    type: 'jsipslagather'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>bcharles</sys_created_by>
+        <sys_created_on>2023-01-12 23:13:41</sys_created_on>
+        <sys_id>a55819ea2f5021101ed43f96f699b6d0</sys_id>
+        <sys_name>jsipslagather</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_script_include_a55819ea2f5021101ed43f96f699b6d0</sys_update_name>
+    </sys_script_include>
+</record_update>

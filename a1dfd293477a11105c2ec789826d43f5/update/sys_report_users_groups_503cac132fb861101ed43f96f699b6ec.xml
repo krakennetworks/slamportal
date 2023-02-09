@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_report_users_groups">
+    <sys_report_users_groups action="INSERT_OR_UPDATE">
+        <group_id/>
+        <report_id display_value="Libre Latency">d43c60132fb861101ed43f96f699b6e6</report_id>
+        <sys_class_name>sys_report_users_groups</sys_class_name>
+        <sys_created_by>bcharles</sys_created_by>
+        <sys_created_on>2023-02-09 00:25:47</sys_created_on>
+        <sys_id>503cac132fb861101ed43f96f699b6ec</sys_id>
+        <sys_name>d43c60132fb861101ed43f96f699b6e6</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sys_report_users_groups_503cac132fb861101ed43f96f699b6ec</sys_update_name>
+        <user_id display_value="Bernie Charles">846799612f9421101ed43f96f699b6d6</user_id>
+    </sys_report_users_groups>
+</record_update>

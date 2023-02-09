@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container">
+    <sp_container action="DELETE">
+        <background_color/>
+        <background_image/>
+        <background_style>default</background_style>
+        <bootstrap_alt>false</bootstrap_alt>
+        <class_name/>
+        <container_class_name/>
+        <name>Daily Graphs - Container 2</name>
+        <order>2</order>
+        <sp_page display_value="daily_graphs">0b45727d1b9bd510c4bb4375cc4bcb7b</sp_page>
+        <subheader>false</subheader>
+        <sys_class_name>sp_container</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-11-24 05:57:51</sys_created_on>
+        <sys_id>6dc515a21bd39190c4bb4375cc4bcb63</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Daily Graphs - Container 2</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_update_name>sp_container_6dc515a21bd39190c4bb4375cc4bcb63</sys_update_name>
+        <sys_updated_by>bcharles</sys_updated_by>
+        <sys_updated_on>2023-02-07 00:01:19</sys_updated_on>
+        <title/>
+        <width>container</width>
+    </sp_container>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</application>
+        <file_path/>
+        <instance_id>3be6572ddb617fc0b847ac44d4961982</instance_id>
+        <instance_name>dev85975</instance_name>
+        <name>sp_container_6dc515a21bd39190c4bb4375cc4bcb63</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container"><sp_container action="INSERT_OR_UPDATE"><background_color/><background_image/><background_style>default</background_style><bootstrap_alt>false</bootstrap_alt><class_name/><container_class_name/><name>Daily Graphs - Container 2</name><order>2</order><sp_page display_value="daily_graphs">0b45727d1b9bd510c4bb4375cc4bcb7b</sp_page><subheader>false</subheader><sys_class_name>sp_container</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2022-11-24 05:57:51</sys_created_on><sys_id>6dc515a21bd39190c4bb4375cc4bcb63</sys_id><sys_mod_count>1</sys_mod_count><sys_name>Daily Graphs - Container 2</sys_name><sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package><sys_policy/><sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope><sys_update_name>sp_container_6dc515a21bd39190c4bb4375cc4bcb63</sys_update_name><sys_updated_by>bcharles</sys_updated_by><sys_updated_on>2023-02-07 00:01:19</sys_updated_on><title/><width>container</width></sp_container></record_update>]]></payload>
+        <payload_hash>2054725116</payload_hash>
+        <record_name>Daily Graphs - Container 2</record_name>
+        <reverted_from/>
+        <source>7bb5116a2f5021101ed43f96f699b648</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>bcharles</sys_created_by>
+        <sys_created_on>2023-02-07 00:01:19</sys_created_on>
+        <sys_id>de639aaa2f30a1101ed43f96f699b67f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>186292d49c10000001</sys_recorded_at>
+        <sys_updated_by>bcharles</sys_updated_by>
+        <sys_updated_on>2023-02-07 00:01:19</sys_updated_on>
+        <type>Container</type>
+        <update_guid>1a639aaab030a1106152ea41dbbe977f</update_guid>
+        <update_guid_history>1a639aaab030a1106152ea41dbbe977f:2054725116,5c227d6d25d4211020909d90ebb8f751:-233872177</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Daily Graphs - Container 2">e321f8d72fb861101ed43f96f699b693</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>bcharles</sys_created_by>
+        <sys_created_on>2023-02-09 00:47:35</sys_created_on>
+        <sys_db_object display_value="" name="sp_container">sp_container</sys_db_object>
+        <sys_id>3338505153f54c6e95a46e0c45086999</sys_id>
+        <sys_metadata>6dc515a21bd39190c4bb4375cc4bcb63</sys_metadata>
+        <sys_name>Daily Graphs - Container 2</sys_name>
+        <sys_package display_value="SLA Monitoring Portal" source="x_620670_sla_mon_0">a1dfd293477a11105c2ec789826d43f5</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="SLA Monitoring Portal">a1dfd293477a11105c2ec789826d43f5</sys_scope>
+        <sys_scope_delete display_value="">3eb1dca27624471aa90d0e0f60a9ad79</sys_scope_delete>
+        <sys_update_name>sp_container_6dc515a21bd39190c4bb4375cc4bcb63</sys_update_name>
+        <sys_update_version display_value="sp_container_6dc515a21bd39190c4bb4375cc4bcb63">de639aaa2f30a1101ed43f96f699b67f</sys_update_version>
+    </sys_metadata_delete>
+</record_update>
